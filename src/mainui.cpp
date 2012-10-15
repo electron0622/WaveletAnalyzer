@@ -37,7 +37,7 @@ void MainUI::Execute(void) {
     return;
 }
 
-void test(){
+void test(GtkWidget *button, void *user_data){
     GtkWidget *dialog;
     dialog = gtk_message_dialog_new(
             nullptr,
@@ -50,15 +50,16 @@ void test(){
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
 }
+
 bool MainUI::Init(void) {
-    if(!BuildUI("wagui.glade", "wamain")) {
+    if(!LoadUI("wagui.xml")) {
         GtkWidget *dialog;
         dialog = gtk_message_dialog_new(
                 nullptr,
                 GTK_DIALOG_MODAL,
                 GTK_MESSAGE_ERROR,
                 GTK_BUTTONS_OK,
-                "wagui.glade is not found or is broken."
+                "wagui.xml is not found."
         );
         gtk_window_set_title(GTK_WINDOW(dialog), "File not found.");
         gtk_dialog_run(GTK_DIALOG(dialog));
@@ -67,8 +68,10 @@ bool MainUI::Init(void) {
     }
     std::function<void (void)> f;
     f = bind(&MainUI::FileOpen, this);
-    SetCallback(GTK_SIGNAL_FUNC(test), nullptr, "menu_open");
-    ExecuteUI();
+    SetCallback("wamain", "destroy", GTK_SIGNAL_FUNC(gtk_main_quit), nullptr);
+    SetCallback("menu_open", "button_press_event", GTK_SIGNAL_FUNC(test), nullptr);
+    ShowUI("wamain");
+    GUI::Execute();
     return true;
 }
 

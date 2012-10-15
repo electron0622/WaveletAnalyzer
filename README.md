@@ -1,4 +1,4 @@
-Wavelet-Analyzer
-================
+WaveletAnalyzer
+===============
 
 卒研用

@@ -39,29 +39,31 @@ public:
 
 public:
 
-    bool BuildUI(const char *filename, const char *objectname);
-    bool BuildUI(const void *data, size_t size, const char *objectname);
+    bool LoadUI(const char *file_name);
+    bool LoadUI(const void *data, size_t size);
+    bool ShowUI(const char *object_name);
 
 public:
 
-    bool SetCallback(GtkSignalFunc func, void *data, const char *eventname);
+    bool SetCallback(const char *object_name, const char *event_name, GtkSignalFunc func, void *data);
 
 public:
 
-    void ExecuteUI(void);
+    void Execute(void);
 
 private:
 
     static void GtkInitOnce(void);
+    static void GtkExecuteOnce(void);
 
 private:
 
     static once_flag m_InitFlag;
+    static once_flag m_ExecuteFlag;
 
 private:
 
     GtkBuilder *m_Builder;
-    GtkWidget  *m_Window;
 
 };
 
