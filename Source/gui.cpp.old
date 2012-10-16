@@ -20,17 +20,43 @@
 //============================================================================
 
 #include <stdlib.h>
+#include <string>
 #include <stdexcept>
 #include "gui.hpp"
 
 namespace WaveletAnalyzer {
 
+using std::string;
 using std::exception;
+
+class gui_exception : public exception {
+
+public:
+
+    gui_exception() {
+    }
+
+    gui_exception(const string &message) {
+        m_Message = message;
+    }
+
+    virtual ~gui_exception() throw() {
+    }
+
+    virtual const char *what(void) const throw() {
+        return m_Message.c_str();
+    }
+
+private:
+
+    string m_Message;
+
+};
 
 GUI::GUI() {
     call_once(m_InitFlag, GtkInitOnce);
     m_Builder = gtk_builder_new();
-    if(!m_Builder) throw exception(); // "gtk_builder_new returned nullptr."
+    if(!m_Builder) throw gui_exception("gtk_builder_new returned nullptr.");
 }
 
 GUI::~GUI() {

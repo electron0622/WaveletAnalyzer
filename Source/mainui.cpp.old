@@ -19,12 +19,9 @@
 //
 //============================================================================
 
-#include <functional>
 #include "mainui.hpp"
 
 namespace WaveletAnalyzer {
-
-using std::bind;
 
 MainUI::MainUI() {
 }
@@ -34,21 +31,9 @@ MainUI::~MainUI() {
 
 void MainUI::Execute(void) {
     if(!Init()) return;
+    ShowUI("wamain");
+    GUI::Execute();
     return;
-}
-
-void test(GtkWidget *button, void *user_data){
-    GtkWidget *dialog;
-    dialog = gtk_message_dialog_new(
-            nullptr,
-            GTK_DIALOG_MODAL,
-            GTK_MESSAGE_ERROR,
-            GTK_BUTTONS_OK,
-            "wagui.glade is not found or is broken."
-    );
-    gtk_window_set_title(GTK_WINDOW(dialog), "File not found.");
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
 }
 
 bool MainUI::Init(void) {
@@ -66,16 +51,31 @@ bool MainUI::Init(void) {
         gtk_widget_destroy(dialog);
         return false;
     }
-    std::function<void (void)> f;
-    f = bind(&MainUI::FileOpen, this);
-    SetCallback("wamain", "destroy", GTK_SIGNAL_FUNC(gtk_main_quit), nullptr);
-    SetCallback("menu_open", "button_press_event", GTK_SIGNAL_FUNC(test), nullptr);
-    ShowUI("wamain");
-    GUI::Execute();
+    SetCallback("wamain",      "destroy",            GTK_SIGNAL_FUNC(Quit),       this);
+    SetCallback("menu_open",   "button_press_event", GTK_SIGNAL_FUNC(OpenFile),   this);
+    SetCallback("menu_device", "button_press_event", GTK_SIGNAL_FUNC(OpenDevice), this);
+    SetCallback("menu_close",  "button_press_event", GTK_SIGNAL_FUNC(Close),      this);
+    SetCallback("menu_quit",   "button_press_event", GTK_SIGNAL_FUNC(Quit),       this);
     return true;
 }
 
-void MainUI::FileOpen(void) {
+void MainUI::OpenFile(GtkWidget *button, MainUI *this_ptr) {
+    GtkWidget *dialog;
+    dialog = gtk_file_selection_new("Please select a file for editing.");
+    gtk_widget_show(dialog);
+    return;
+}
+
+void MainUI::OpenDevice(GtkWidget *button, MainUI *this_ptr) {
+    return;
+}
+
+void MainUI::Close(GtkWidget *button, MainUI *this_ptr) {
+    return;
+}
+
+void MainUI::Quit(GtkWidget *button, MainUI *this_ptr) {
+    gtk_main_quit();
     return;
 }
 

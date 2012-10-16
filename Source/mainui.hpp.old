@@ -43,7 +43,10 @@ private:
 
 private:
 
-    void FileOpen(void);
+    static void OpenFile(GtkWidget *button, MainUI *this_ptr);
+    static void OpenDevice(GtkWidget *button, MainUI *this_ptr);
+    static void Close(GtkWidget *button, MainUI *this_ptr);
+    static void Quit(GtkWidget *button, MainUI *this_ptr);
 
 };
 

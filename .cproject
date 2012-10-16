@@ -54,7 +54,7 @@
 									<listOptionValue builtIn="false" value="C:/MinGW/include/freetype2"/>
 									<listOptionValue builtIn="false" value="C:/MinGW/include/libpng14"/>
 								</option>
-								<option id="gnu.c.compiler.option.misc.other.521650980" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -mms-bitfields" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.521650980" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -mms-bitfields" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1073229519" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.1814320741" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
@@ -142,7 +142,7 @@
 									<listOptionValue builtIn="false" value="C:/MinGW/include/freetype2"/>
 									<listOptionValue builtIn="false" value="C:/MinGW/include/libpng14"/>
 								</option>
-								<option id="gnu.c.compiler.option.misc.other.762628813" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -mms-bitfields" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.762628813" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -mms-bitfields" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.802355890" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.468055382" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release"/>
