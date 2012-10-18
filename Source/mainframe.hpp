@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  main.cpp
+//  mainframe.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,37 +19,30 @@
 //
 //============================================================================
 
-#include <stdexcept>
-#include <wx/msgdlg.h>
-#include <wx/encconv.h>
-#include "main.hpp"
-#include "mainframe.hpp"
+#ifndef _MAINFRAME_HPP_
+#define _MAINFRAME_HPP_
+
+#include "frame.h"
 
 namespace WaveletAnalyzer {
 
-using std::exception;
-using std::bad_alloc;
+class MainFrame : public IMainFrame {
 
-IMPLEMENT_APP(MainApp)
+public:
+    MainFrame(wxWindow *parent);
+    ~MainFrame();
 
-bool MainApp::OnInit(void) {
-    try {
-        MainFrame *frame = new MainFrame(nullptr);
-        if(!frame) throw bad_alloc();
-        frame->Show(true);
-        SetTopWindow(frame);
-    }
-    catch(exception &e) {
-        wxString ErrMsg(e.what(), wxConvUTF8);
-        wxMessageBox(ErrMsg, wxT("Error"), wxOK|wxICON_ERROR);
-        return false;
-    }
-    catch(...) {
-        wxString ErrMsg(wxT("An unknown error has occurred."));
-        wxMessageBox(ErrMsg, wxT("Error"), wxOK|wxICON_ERROR);
-        return false;
-    }
-    return true;
-}
+private:
+    void OnMenuOpen(wxCommandEvent &event);
+    void OnMenuDevice(wxCommandEvent &event);
+    void OnMenuClose(wxCommandEvent &event);
+    void OnMenuExit(wxCommandEvent &event);
+
+private:
+    void OnMenuAbout(wxCommandEvent &event);
+
+};
 
 }  // namespace WaveletAnalyzer
+
+#endif /* _MAINFRAME_HPP_ */

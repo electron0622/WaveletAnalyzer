@@ -1,0 +1,125 @@
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Oct  8 2012)
+// http://www.wxformbuilder.org/
+//
+// PLEASE DO "NOT" EDIT THIS FILE!
+///////////////////////////////////////////////////////////////////////////
+
+#include "frame.h"
+
+///////////////////////////////////////////////////////////////////////////
+using namespace WaveletAnalyzer;
+
+IMainFrame::IMainFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	mMenubar = new wxMenuBar( 0 );
+	mMenuFile = new wxMenu();
+	wxMenuItem* mMenuItemOpen;
+	mMenuItemOpen = new wxMenuItem( mMenuFile, wxID_ANY, wxString( wxT("Open...") ) + wxT('\t') + wxT("Ctrl+O"), wxT("Open the audio file"), wxITEM_NORMAL );
+	mMenuFile->Append( mMenuItemOpen );
+	
+	wxMenuItem* mMenuItemDevice;
+	mMenuItemDevice = new wxMenuItem( mMenuFile, wxID_ANY, wxString( wxT("Device...") ) + wxT('\t') + wxT("Ctrl+D"), wxT("Open the audio device"), wxITEM_NORMAL );
+	mMenuFile->Append( mMenuItemDevice );
+	
+	wxMenuItem* mMenuItemClose;
+	mMenuItemClose = new wxMenuItem( mMenuFile, wxID_ANY, wxString( wxT("Close") ) , wxEmptyString, wxITEM_NORMAL );
+	mMenuFile->Append( mMenuItemClose );
+	
+	mMenuFile->AppendSeparator();
+	
+	wxMenuItem* mMenuItemExit;
+	mMenuItemExit = new wxMenuItem( mMenuFile, wxID_ANY, wxString( wxT("Exit") ) + wxT('\t') + wxT("Alt-F4"), wxT("Quit Wavelet Analyzer"), wxITEM_NORMAL );
+	mMenuFile->Append( mMenuItemExit );
+	
+	mMenubar->Append( mMenuFile, wxT("&File") ); 
+	
+	mMenuSettings = new wxMenu();
+	mMenubar->Append( mMenuSettings, wxT("&Settings") ); 
+	
+	mMenuHelp = new wxMenu();
+	wxMenuItem* mMenuItemAbout;
+	mMenuItemAbout = new wxMenuItem( mMenuHelp, wxID_ANY, wxString( wxT("About...") ) + wxT('\t') + wxT("F1"), wxT("Show about dialog"), wxITEM_NORMAL );
+	mMenuHelp->Append( mMenuItemAbout );
+	
+	mMenubar->Append( mMenuHelp, wxT("&Help") ); 
+	
+	this->SetMenuBar( mMenubar );
+	
+	wxBoxSizer* bSizer1;
+	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
+	
+	mPanelMain = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	bSizer1->Add( mPanelMain, 1, wxEXPAND, 5 );
+	
+	mStaticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
+	bSizer1->Add( mStaticline1, 0, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxVERTICAL );
+	
+	mPanelSub = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 320,240 ), wxTAB_TRAVERSAL );
+	bSizer2->Add( mPanelSub, 0, wxEXPAND, 5 );
+	
+	mStaticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer2->Add( mStaticline2, 0, wxEXPAND, 5 );
+	
+	mPanelSettings = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	bSizer2->Add( mPanelSettings, 1, wxEXPAND, 5 );
+	
+	
+	bSizer1->Add( bSizer2, 0, wxEXPAND, 5 );
+	
+	
+	this->SetSizer( bSizer1 );
+	this->Layout();
+	mStatusBar = this->CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY );
+	
+	this->Centre( wxBOTH );
+	
+	// Connect Events
+	this->Connect( mMenuItemOpen->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuOpen ) );
+	this->Connect( mMenuItemDevice->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuDevice ) );
+	this->Connect( mMenuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuClose ) );
+	this->Connect( mMenuItemExit->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuExit ) );
+	this->Connect( mMenuItemAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuAbout ) );
+}
+
+IMainFrame::~IMainFrame()
+{
+	// Disconnect Events
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuOpen ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuDevice ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuClose ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuExit ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuAbout ) );
+	
+}
+
+ISettingFrame::ISettingFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer3;
+	bSizer3 = new wxBoxSizer( wxVERTICAL );
+	
+	mNotebookSettings = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	mPanel1 = new wxPanel( mNotebookSettings, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	mNotebookSettings->AddPage( mPanel1, wxT("a page"), false );
+	mPanel2 = new wxPanel( mNotebookSettings, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	mNotebookSettings->AddPage( mPanel2, wxT("a page"), false );
+	
+	bSizer3->Add( mNotebookSettings, 1, wxEXPAND, 5 );
+	
+	
+	this->SetSizer( bSizer3 );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+}
+
+ISettingFrame::~ISettingFrame()
+{
+}
