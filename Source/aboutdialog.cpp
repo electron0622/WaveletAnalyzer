@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  gui.hpp
+//  aboutdialog.cpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,54 +19,19 @@
 //
 //============================================================================
 
-#ifndef _GUI_HPP_
-#define _GUI_HPP_
-
-#include <gtk/gtk.h>
-#include <mutex>
+#include "aboutdialog.hpp"
 
 namespace WaveletAnalyzer {
 
-using std::once_flag;
-using std::call_once;
+AboutDialog::AboutDialog(wxWindow *parent) : IAboutDialog(parent) {
+}
 
-class GUI {
+AboutDialog::~AboutDialog() {
+}
 
-public:
-
-    GUI();
-    virtual ~GUI();
-
-public:
-
-    bool LoadUI(const char *file_name);
-    bool LoadUI(const void *data, size_t size);
-    bool ShowUI(const char *object_name);
-
-public:
-
-    bool SetCallback(const char *object_name, const char *event_name, GtkSignalFunc func, void *data);
-
-public:
-
-    void Execute(void);
-
-private:
-
-    static void GtkInitOnce(void);
-    static void GtkExecuteOnce(void);
-
-private:
-
-    static once_flag m_InitFlag;
-    static once_flag m_ExecuteFlag;
-
-private:
-
-    GtkBuilder *m_Builder;
-
-};
+void AboutDialog::OnButtonOK(wxCommandEvent &event) {
+    Close();
+    return;
+}
 
 }  // namespace WaveletAnalyzer
-
-#endif /* _GUI_HPP_ */

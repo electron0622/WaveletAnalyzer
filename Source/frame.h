@@ -25,6 +25,9 @@
 #include <wx/statusbr.h>
 #include <wx/frame.h>
 #include <wx/notebook.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -83,6 +86,36 @@ namespace WaveletAnalyzer
 			ISettingFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 			
 			~ISettingFrame();
+		
+	};
+	
+	///////////////////////////////////////////////////////////////////////////////
+	/// Class IAboutDialog
+	///////////////////////////////////////////////////////////////////////////////
+	class IAboutDialog : public wxDialog 
+	{
+		private:
+		
+		protected:
+			wxPanel* mAboutPanel;
+			wxStaticText* mStaticTextTitle;
+			wxStaticText* mStaticTextVersion;
+			wxStaticText* mStaticTextSpace1;
+			wxStaticText* mStaticTextDescription;
+			wxStaticText* mStaticTextSpace2;
+			wxStaticText* mStaticTextDevelopedBy;
+			wxStaticText* mStaticTextDeveloper1;
+			wxStaticText* mStaticTextSpace3;
+			wxButton* mButtonOK;
+			
+			// Virtual event handlers, overide them in your derived class
+			virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
+			
+		
+		public:
+			
+			IAboutDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("About..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+			~IAboutDialog();
 		
 	};
 	

@@ -21,11 +21,12 @@
 
 #include <stdexcept>
 #include "mainframe.hpp"
+#include "aboutdialog.hpp"
 
 namespace WaveletAnalyzer {
 
 MainFrame::MainFrame(wxWindow *parent) : IMainFrame(parent) {
-    new int[0xF0000000];
+//    new int[0xF0000000];
 }
 
 MainFrame::~MainFrame() {
@@ -49,6 +50,8 @@ void MainFrame::OnMenuExit(wxCommandEvent &event) {
 }
 
 void MainFrame::OnMenuAbout(wxCommandEvent &event) {
+    AboutDialog dialog(this);
+    dialog.ShowModal();
     return;
 }
 

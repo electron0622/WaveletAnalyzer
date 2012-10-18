@@ -102,8 +102,8 @@ ISettingFrame::ISettingFrame( wxWindow* parent, wxWindowID id, const wxString& t
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
-	wxBoxSizer* bSizer3;
-	bSizer3 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* bSizer1;
+	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	mNotebookSettings = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	mPanel1 = new wxPanel( mNotebookSettings, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -111,10 +111,10 @@ ISettingFrame::ISettingFrame( wxWindow* parent, wxWindowID id, const wxString& t
 	mPanel2 = new wxPanel( mNotebookSettings, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	mNotebookSettings->AddPage( mPanel2, wxT("a page"), false );
 	
-	bSizer3->Add( mNotebookSettings, 1, wxEXPAND, 5 );
+	bSizer1->Add( mNotebookSettings, 1, wxEXPAND, 5 );
 	
 	
-	this->SetSizer( bSizer3 );
+	this->SetSizer( bSizer1 );
 	this->Layout();
 	
 	this->Centre( wxBOTH );
@@ -122,4 +122,76 @@ ISettingFrame::ISettingFrame( wxWindow* parent, wxWindowID id, const wxString& t
 
 ISettingFrame::~ISettingFrame()
 {
+}
+
+IAboutDialog::IAboutDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer1;
+	bSizer1 = new wxBoxSizer( wxVERTICAL );
+	
+	mAboutPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER|wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxVERTICAL );
+	
+	mStaticTextTitle = new wxStaticText( mAboutPanel, wxID_ANY, wxT("Wavelet Analyzer"), wxDefaultPosition, wxDefaultSize, 0 );
+	mStaticTextTitle->Wrap( -1 );
+	mStaticTextTitle->SetFont( wxFont( 18, 70, 90, 90, false, wxEmptyString ) );
+	
+	bSizer2->Add( mStaticTextTitle, 0, wxALIGN_CENTER|wxALL, 5 );
+	
+	mStaticTextVersion = new wxStaticText( mAboutPanel, wxID_ANY, wxT("Version 0.0.0 alpha"), wxDefaultPosition, wxDefaultSize, 0 );
+	mStaticTextVersion->Wrap( -1 );
+	bSizer2->Add( mStaticTextVersion, 0, wxALIGN_RIGHT|wxALL, 5 );
+	
+	mStaticTextSpace1 = new wxStaticText( mAboutPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	mStaticTextSpace1->Wrap( -1 );
+	bSizer2->Add( mStaticTextSpace1, 0, wxALIGN_CENTER|wxALL, 5 );
+	
+	mStaticTextDescription = new wxStaticText( mAboutPanel, wxID_ANY, wxT("An open source wavelet analyser for the audio signal."), wxDefaultPosition, wxDefaultSize, 0 );
+	mStaticTextDescription->Wrap( -1 );
+	bSizer2->Add( mStaticTextDescription, 0, wxALIGN_CENTER|wxALL, 5 );
+	
+	mStaticTextSpace2 = new wxStaticText( mAboutPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	mStaticTextSpace2->Wrap( -1 );
+	bSizer2->Add( mStaticTextSpace2, 0, wxALIGN_CENTER|wxALL, 5 );
+	
+	mStaticTextDevelopedBy = new wxStaticText( mAboutPanel, wxID_ANY, wxT("Developed by:"), wxDefaultPosition, wxDefaultSize, 0 );
+	mStaticTextDevelopedBy->Wrap( -1 );
+	bSizer2->Add( mStaticTextDevelopedBy, 0, wxALIGN_CENTER|wxALL, 5 );
+	
+	mStaticTextDeveloper1 = new wxStaticText( mAboutPanel, wxID_ANY, wxT("Sato Takaaki"), wxDefaultPosition, wxDefaultSize, 0 );
+	mStaticTextDeveloper1->Wrap( -1 );
+	bSizer2->Add( mStaticTextDeveloper1, 0, wxALIGN_CENTER|wxALL, 5 );
+	
+	mStaticTextSpace3 = new wxStaticText( mAboutPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	mStaticTextSpace3->Wrap( -1 );
+	bSizer2->Add( mStaticTextSpace3, 0, wxALIGN_CENTER|wxALL, 5 );
+	
+	
+	mAboutPanel->SetSizer( bSizer2 );
+	mAboutPanel->Layout();
+	bSizer2->Fit( mAboutPanel );
+	bSizer1->Add( mAboutPanel, 1, wxALL|wxEXPAND, 5 );
+	
+	mButtonOK = new wxButton( this, wxID_ANY, wxT("OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer1->Add( mButtonOK, 0, wxALIGN_CENTER|wxALL, 5 );
+	
+	
+	this->SetSizer( bSizer1 );
+	this->Layout();
+	bSizer1->Fit( this );
+	
+	this->Centre( wxBOTH );
+	
+	// Connect Events
+	mButtonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( IAboutDialog::OnButtonOK ), NULL, this );
+}
+
+IAboutDialog::~IAboutDialog()
+{
+	// Disconnect Events
+	mButtonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( IAboutDialog::OnButtonOK ), NULL, this );
+	
 }

@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  mainui.hpp
+//  aboutdialog.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,37 +19,24 @@
 //
 //============================================================================
 
-#ifndef _MAINUI_HPP_
-#define _MAINUI_HPP_
+#ifndef _ABOUTDIALOG_HPP_
+#define _ABOUTDIALOG_HPP_
 
-#include "gui.hpp"
+#include "frame.h"
 
 namespace WaveletAnalyzer {
 
-class MainUI : private GUI {
+class AboutDialog : public IAboutDialog {
 
 public:
-
-    MainUI();
-    ~MainUI();
-
-public:
-
-    void Execute(void);
+    AboutDialog(wxWindow *parent);
+    ~AboutDialog();
 
 private:
-
-    bool Init(void);
-
-private:
-
-    static void OpenFile(GtkWidget *button, MainUI *this_ptr);
-    static void OpenDevice(GtkWidget *button, MainUI *this_ptr);
-    static void Close(GtkWidget *button, MainUI *this_ptr);
-    static void Quit(GtkWidget *button, MainUI *this_ptr);
+    void OnButtonOK(wxCommandEvent &event);
 
 };
 
 }  // namespace WaveletAnalyzer
 
-#endif /* _MAINUI_HPP_ */
+#endif /* _ABOUTDIALOG_HPP_ */
