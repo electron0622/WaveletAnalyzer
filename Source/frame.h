@@ -97,7 +97,7 @@ namespace WaveletAnalyzer
 		private:
 		
 		protected:
-			wxPanel* mAboutPanel;
+			wxPanel* mPanelAbout;
 			wxStaticText* mStaticTextTitle;
 			wxStaticText* mStaticTextVersion;
 			wxStaticText* mStaticTextSpace1;
