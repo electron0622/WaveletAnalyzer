@@ -27,7 +27,7 @@
 namespace WaveletAnalyzer {
 
 MainFrame::MainFrame(wxWindow *parent) : IMainFrame(parent) {
-    m_Player = new Player;
+    m_Player = nullptr;
 }
 
 MainFrame::~MainFrame() {
@@ -35,11 +35,17 @@ MainFrame::~MainFrame() {
 }
 
 void MainFrame::OnMenuOpen(wxCommandEvent &event) {
+    if(m_Player) {
+        wxMessageBox(wxT("Audio stream is already open. Do you close the newly opened?"), wxT("Confirm"), wxYES_NO|wxICON_QUESTION);
+        delete m_Player;
+        m_Player = nullptr;
+    }
     wxFileDialog dialog(this);
     dialog.ShowModal();
     wxString path = dialog.GetPath();
     if(path.IsEmpty()) return;
-//    wxMessageBox(path, wxT("Message"), wxOK);
+    m_Player = new Player;
+    if(!m_Player) throw bad_alloc();
     m_Player->Init();
     return;
 }
@@ -49,7 +55,8 @@ void MainFrame::OnMenuDevice(wxCommandEvent &event) {
 }
 
 void MainFrame::OnMenuClose(wxCommandEvent &event) {
-    m_Player->End();
+    delete m_Player;
+    m_Player = nullptr;
     return;
 }
 

@@ -24,7 +24,6 @@
 
 #include "frame.h"
 #include "player.hpp"
-#include "recorder.hpp"
 
 namespace WaveletAnalyzer {
 
@@ -44,8 +43,8 @@ private:
     void OnMenuAbout(wxCommandEvent &event);
 
 private:
-    Player  *m_Player;
-    Recoder *m_Recorder;
+    Player   *m_Player;
+    Recorder *m_Recorder;
 
 };
 

@@ -19,24 +19,58 @@
 //
 //============================================================================
 
+#include <stdexcept>
+#include <functional>
+#include <unistd.h>
 #include "player.hpp"
 
 namespace WaveletAnalyzer {
 
-Player::Player() : m_PlayFlag(false), m_StopFlag(false), m_EndFlag(false) {
-    m_Thread = thread(bind(Main, this));
+using std::bad_alloc;
+using std::bind;
+
+Player::Player() : m_PlayFlag(false), m_RecordFlag(false), m_StopFlag(false), m_EndFlag(false) {
+    m_Thread = new thread(bind(&Player::Main, this));
+    if(!m_Thread) throw bad_alloc();
 }
 
 Player::~Player() {
     m_EndFlag = true;
-    m_Thread.join();
+    m_Thread->join();
+    delete m_Thread;
+}
+
+void Player::Play(void) {
+    m_PlayFlag = true;
+    return;
+}
+
+void Player::Pause(void) {
+    m_PlayFlag = false;
+    return;
+}
+
+void Player::Record(void) {
+    m_RecordFlag = true;
+    return;
+}
+
+void Player::Stop(void) {
+    m_StopFlag = true;
+    return;
 }
 
 void Player::Main(void) {
     while(!m_EndFlag) {
-        if(m_PlayFlag) Update();
-        if(m_StopFlag) Reset();
-        Wait();
+        if(m_StopFlag) {
+            Reset();
+            continue;
+        }
+        if(m_PlayFlag) {
+            Update();
+            continue;
+        }
+        usleep(1);
     }
     return;
 }
@@ -46,11 +80,6 @@ void Player::Update(void) {
 }
 
 void Player::Reset(void) {
-    return;
-}
-
-void Player::Wait(void) {
-    sleep_for(milliseconds(1));
     return;
 }
 

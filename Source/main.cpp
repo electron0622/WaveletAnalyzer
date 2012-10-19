@@ -28,14 +28,12 @@
 namespace WaveletAnalyzer {
 
 using std::exception;
-using std::bad_alloc;
 
 IMPLEMENT_APP(MainApp)
 
 bool MainApp::OnInit(void) {
     try {
         MainFrame *frame = new MainFrame(nullptr);
-        if(!frame) throw bad_alloc();
         frame->Show(true);
         SetTopWindow(frame);
     }

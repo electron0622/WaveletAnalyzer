@@ -23,14 +23,10 @@
 #define _PLAYER_HPP_
 
 #include <thread>
-#include <functional>
 
 namespace WaveletAnalyzer {
 
 using std::thread;
-using std::bind;
-using std::this_thread::sleep_for;
-using std::chrono::milliseconds;
 
 class Player {
 
@@ -40,24 +36,24 @@ public:
 
 public:
     void Init(void);
-    void End(void);
 
 public:
     void Play(void);
     void Pause(void);
+    void Record(void);
     void Stop(void);
 
 private:
     void Main(void);
     void Update(void);
     void Reset(void);
-    void Wait(void);
 
 private:
-    thread m_Thread;
-    bool   m_PlayFlag;
-    bool   m_StopFlag;
-    bool   m_EndFlag;
+    thread *m_Thread;
+    bool    m_PlayFlag;
+    bool    m_RecordFlag;
+    bool    m_StopFlag;
+    bool    m_EndFlag;
 
 };
 
