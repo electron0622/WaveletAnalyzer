@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  mainframe.cpp
+//  player.cpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,48 +19,38 @@
 //
 //============================================================================
 
-#include <stdexcept>
-#include <wx/filedlg.h>
-#include "mainframe.hpp"
-#include "aboutdialog.hpp"
+#include "player.hpp"
 
 namespace WaveletAnalyzer {
 
-MainFrame::MainFrame(wxWindow *parent) : IMainFrame(parent) {
-    m_Player = new Player;
+Player::Player() : m_PlayFlag(false), m_StopFlag(false), m_EndFlag(false) {
+    m_Thread = thread(bind(Main, this));
 }
 
-MainFrame::~MainFrame() {
-    delete m_Player;
+Player::~Player() {
+    m_EndFlag = true;
+    m_Thread.join();
 }
 
-void MainFrame::OnMenuOpen(wxCommandEvent &event) {
-    wxFileDialog dialog(this);
-    dialog.ShowModal();
-    wxString path = dialog.GetPath();
-    if(path.IsEmpty()) return;
-//    wxMessageBox(path, wxT("Message"), wxOK);
-    m_Player->Init();
+void Player::Main(void) {
+    while(!m_EndFlag) {
+        if(m_PlayFlag) Update();
+        if(m_StopFlag) Reset();
+        Wait();
+    }
     return;
 }
 
-void MainFrame::OnMenuDevice(wxCommandEvent &event) {
+void Player::Update(void) {
     return;
 }
 
-void MainFrame::OnMenuClose(wxCommandEvent &event) {
-    m_Player->End();
+void Player::Reset(void) {
     return;
 }
 
-void MainFrame::OnMenuExit(wxCommandEvent &event) {
-    Close();
-    return;
-}
-
-void MainFrame::OnMenuAbout(wxCommandEvent &event) {
-    AboutDialog dialog(this);
-    dialog.ShowModal();
+void Player::Wait(void) {
+    sleep_for(milliseconds(1));
     return;
 }
 

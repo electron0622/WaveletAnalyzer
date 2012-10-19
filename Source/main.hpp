@@ -19,6 +19,9 @@
 //
 //============================================================================
 
+#ifndef _MAIN_HPP_
+#define _MAIN_HPP_
+
 #include <wx/app.h>
 
 namespace WaveletAnalyzer {
@@ -31,3 +34,5 @@ public:
 };
 
 }  // namespace WaveletAnalyzer
+
+#endif /* _MAIN_HPP_ */
