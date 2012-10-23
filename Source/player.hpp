@@ -35,7 +35,7 @@ public:
     ~Player();
 
 public:
-    void Init(void);
+    bool Init(const char *path);
 
 public:
     void Play(void);

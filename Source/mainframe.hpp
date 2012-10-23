@@ -43,8 +43,11 @@ private:
     void OnMenuAbout(wxCommandEvent &event);
 
 private:
-    Player   *m_Player;
-    Recorder *m_Recorder;
+    bool OpenStream(const char *path);
+    bool CloseStream(void);
+
+private:
+    Player *m_Player;
 
 };
 

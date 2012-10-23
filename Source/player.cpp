@@ -19,25 +19,27 @@
 //
 //============================================================================
 
-#include <stdexcept>
+//#include <stdexcept>
 #include <functional>
 #include <unistd.h>
 #include "player.hpp"
 
 namespace WaveletAnalyzer {
 
-using std::bad_alloc;
 using std::bind;
 
 Player::Player() : m_PlayFlag(false), m_RecordFlag(false), m_StopFlag(false), m_EndFlag(false) {
     m_Thread = new thread(bind(&Player::Main, this));
-    if(!m_Thread) throw bad_alloc();
 }
 
 Player::~Player() {
     m_EndFlag = true;
     m_Thread->join();
     delete m_Thread;
+}
+
+bool Player::Init(const char *path) {
+    return true;
 }
 
 void Player::Play(void) {

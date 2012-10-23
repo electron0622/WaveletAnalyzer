@@ -19,10 +19,10 @@
 //
 //============================================================================
 
-#include <stdexcept>
 #include <wx/filedlg.h>
-#include "mainframe.hpp"
+#include <wx/msgdlg.h>
 #include "aboutdialog.hpp"
+#include "mainframe.hpp"
 
 namespace WaveletAnalyzer {
 
@@ -35,18 +35,12 @@ MainFrame::~MainFrame() {
 }
 
 void MainFrame::OnMenuOpen(wxCommandEvent &event) {
-    if(m_Player) {
-        wxMessageBox(wxT("Audio stream is already open. Do you close the newly opened?"), wxT("Confirm"), wxYES_NO|wxICON_QUESTION);
-        delete m_Player;
-        m_Player = nullptr;
-    }
+    if(!CloseStream()) return;
     wxFileDialog dialog(this);
     dialog.ShowModal();
     wxString path = dialog.GetPath();
     if(path.IsEmpty()) return;
-    m_Player = new Player;
-    if(!m_Player) throw bad_alloc();
-    m_Player->Init();
+    OpenStream(path.c_str());
     return;
 }
 
@@ -61,7 +55,7 @@ void MainFrame::OnMenuClose(wxCommandEvent &event) {
 }
 
 void MainFrame::OnMenuExit(wxCommandEvent &event) {
-    Close();
+    if(CloseStream()) Close();
     return;
 }
 
@@ -69,6 +63,33 @@ void MainFrame::OnMenuAbout(wxCommandEvent &event) {
     AboutDialog dialog(this);
     dialog.ShowModal();
     return;
+}
+
+bool MainFrame::OpenStream(const char *path) {
+    m_Player = new Player;
+    if(!m_Player->Init(path)) {
+        const wxString message = wxT("Cannot open the audio stream.");
+        const wxString caption = wxT("Error");
+        const int      style   = wxOK|wxICON_ERROR;
+        wxMessageBox(message, caption, style, this);
+        delete m_Player;
+        m_Player = nullptr;
+        return false;
+    }
+    return true;
+}
+
+bool MainFrame::CloseStream(void) {
+    if(m_Player) {
+        const wxString message = wxT("Close the audio stream?");
+        const wxString caption = wxT("Confirm");
+        const int      style   = wxYES_NO|wxICON_QUESTION;
+        int answer = wxMessageBox(message, caption, style, this);
+        if(answer == wxNO) return false;
+        delete m_Player;
+        m_Player = nullptr;
+    }
+    return true;
 }
 
 }  // namespace WaveletAnalyzer
