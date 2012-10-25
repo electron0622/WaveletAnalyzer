@@ -44,12 +44,13 @@ Player::~Player() {
 
 bool Player::Init(const char *path) {
     if(m_pThread) return false;
-    m_pReader = new AudioDecoder(path);
+    m_pReader = new AudioDecoder(path, 0x10000);
     if(!m_pReader->IsOpen()) {
         delete m_pReader;
         m_pReader = nullptr;
         return false;
     }
+    usleep(1000);
     auto ch = m_pReader->GetNumChannels();
     auto sr = m_pReader->GetSampleRate();
     m_pThread = new thread(bind(&Player::Main, this));

@@ -32,17 +32,19 @@ namespace WaveletAnalyzer {
 
 using std::bind;
 
-AudioDecoder::AudioDecoder(const char *path) : m_OpenFlag(false), m_SeekFlag(false) {
+AudioDecoder::AudioDecoder(const char *path, size_t cache) :
+        m_MaxBufNum(cache >> 2), m_OpenFlag(false), m_SeekFlag(false) {
     auto ppfc = &m_pFormatContext;
     if(avformat_open_input(ppfc, path, nullptr, nullptr)) return;
     auto pfc = *ppfc;
     if(avformat_find_stream_info(pfc, nullptr) < 0) return;
     AVStream *stream = nullptr;
     auto nb_streams = pfc->nb_streams;
-    for(auto i = 0U; i < nb_streams; ++i) {
+    for(unsigned int i = 0; i < nb_streams; ++i) {
         auto s = pfc->streams[i];
         if(s->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
-            stream = s;
+            stream  = s;
+            m_Index = i;
             break;
         }
     }
@@ -78,7 +80,7 @@ void AudioDecoder::SeekSet(void) {
 }
 
 size_t AudioDecoder::Read(float *data, size_t num) {
-    m_Mutex.lock();
+    if(!data) return m_Buffer.size();
     for(size_t i = 0; i < num; i++) {
         if(m_Buffer.empty()) {
             num = i;
@@ -87,7 +89,6 @@ size_t AudioDecoder::Read(float *data, size_t num) {
         data[i] = m_Buffer.front();
         m_Buffer.pop();
     }
-    m_Mutex.unlock();
     return num;
 }
 
@@ -100,10 +101,21 @@ size_t AudioDecoder::GetSampleRate(void) {
 }
 
 void AudioDecoder::Main(void) {
-    while(m_OpenFlag) {
-//        avcodec_decode_audio4(m_pCodecContext, frame, &frameFinished, packet);
+    AVPacket packet;
+    int      finished = 0;
+    AVFrame *frame    = avcodec_alloc_frame();
+    av_init_packet(&packet);
+    size_t  size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+    uint8_t data[size];
+    packet.data = data;
+    packet.size = size;
+    while(m_OpenFlag && av_read_frame(m_pFormatContext, &packet) >= 0) {
+        if(packet.stream_index == m_Index) {
+            avcodec_decode_audio4(m_pCodecContext, frame, &finished, &packet);
+        }
         usleep(1);
     }
+    av_free(frame);
     return;
 }
 

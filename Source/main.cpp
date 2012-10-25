@@ -32,7 +32,7 @@ IMPLEMENT_APP(MainApp)
 
 bool MainApp::OnInit(void) {
     try {
-        MainFrame *frame = new MainFrame(nullptr);
+        auto frame = new MainFrame(nullptr);
         frame->Show(true);
         SetTopWindow(frame);
     }

@@ -37,7 +37,7 @@ using std::queue;
 class AudioDecoder : public AudioReader, public Media {
 
 public:
-    AudioDecoder(const char *path);
+    AudioDecoder(const char *path, size_t cache);
     ~AudioDecoder();
 
 public:
@@ -54,8 +54,10 @@ private:
     thread       m_Thread;
     mutex        m_Mutex;
     queue<float> m_Buffer;
+    size_t       m_MaxBufNum;
     bool         m_OpenFlag;
     bool         m_SeekFlag;
+    int          m_Index;
 
 };
 
