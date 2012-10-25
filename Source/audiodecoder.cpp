@@ -50,7 +50,7 @@ bool AudioDecoder::Open(const char *path) {
     m_pCodecContext = avcodec_alloc_context3(codec);
     if(!m_pCodecContext) return false;
     if(avcodec_open2(m_pCodecContext, codec, nullptr) < 0) return false;
-    avcodec_decode_audio4(m_pCodecContext, frame, &frameFinished, packet);
+//    avcodec_decode_audio4(m_pCodecContext, frame, &frameFinished, packet);
     return true;
 }
 

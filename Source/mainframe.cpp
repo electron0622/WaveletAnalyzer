@@ -38,7 +38,7 @@ void MainFrame::OnMenuOpen(wxCommandEvent &event) {
     if(!CloseStream()) return;
     wxFileDialog dialog(this);
     dialog.ShowModal();
-    wxString path = dialog.GetPath();
+    auto path = dialog.GetPath();
     if(path.IsEmpty()) return;
     OpenStream(path.c_str());
     return;
@@ -67,9 +67,9 @@ void MainFrame::OnMenuAbout(wxCommandEvent &event) {
 bool MainFrame::OpenStream(const char *path) {
     m_Player = new Player;
     if(!m_Player->Init(path)) {
-        const wxString message = wxT("Cannot open the audio stream.");
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
+        const auto message = wxT("Cannot open the audio stream.");
+        const auto caption = wxT("Error");
+        const auto style   = wxOK|wxICON_ERROR;
         wxMessageBox(message, caption, style, this);
         delete m_Player;
         m_Player = nullptr;
@@ -80,10 +80,10 @@ bool MainFrame::OpenStream(const char *path) {
 
 bool MainFrame::CloseStream(void) {
     if(m_Player) {
-        const wxString message = wxT("Close the audio stream?");
-        const wxString caption = wxT("Confirm");
-        const int      style   = wxYES_NO|wxICON_QUESTION;
-        int answer = wxMessageBox(message, caption, style, this);
+        const auto message = wxT("Close the audio stream?");
+        const auto caption = wxT("Confirm");
+        const auto style   = wxYES_NO|wxICON_QUESTION;
+        auto answer = wxMessageBox(message, caption, style, this);
         if(answer == wxNO) return false;
         delete m_Player;
         m_Player = nullptr;

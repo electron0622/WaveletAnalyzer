@@ -37,16 +37,16 @@ bool MainApp::OnInit(void) {
         SetTopWindow(frame);
     }
     catch(exception &e) {
-        const wxString message = e.what();
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
+        const auto message = e.what();
+        const auto caption = wxT("Error");
+        const auto style   = wxOK|wxICON_ERROR;
         wxMessageBox(message, caption, style);
         return false;
     }
     catch(...) {
-        const wxString message = wxT("An unknown error has occurred.");
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
+        const auto message = wxT("An unknown error has occurred.");
+        const auto caption = wxT("Error");
+        const auto style   = wxOK|wxICON_ERROR;
         wxMessageBox(message, caption, style);
         return false;
     }
