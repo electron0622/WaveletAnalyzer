@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  main.cpp
+//  media.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,38 +19,34 @@
 //
 //============================================================================
 
-#include <stdexcept>
-#include <wx/msgdlg.h>
-#include "main.hpp"
-#include "mainframe.hpp"
+#ifndef _MEDIA_HPP_
+#define _MEDIA_HPP_
+
+#include <mutex>
+
+struct AVFormatContext;
+struct AVCodecContext;
 
 namespace WaveletAnalyzer {
 
-using std::exception;
+using std::call_once;
+using std::once_flag;
 
-IMPLEMENT_APP(MainApp)
+class Media {
 
-bool MainApp::OnInit(void) {
-    try {
-        MainFrame *frame = new MainFrame(nullptr);
-        frame->Show(true);
-        SetTopWindow(frame);
-    }
-    catch(exception &e) {
-        const wxString message = e.what();
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
-        wxMessageBox(message, caption, style);
-        return false;
-    }
-    catch(...) {
-        const wxString message = wxT("An unknown error has occurred.");
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
-        wxMessageBox(message, caption, style);
-        return false;
-    }
-    return true;
-}
+public:
+    Media();
+    virtual ~Media();
+
+protected:
+    AVFormatContext *m_pFormatContext;
+    AVCodecContext  *m_pCodecContext;
+
+private:
+    static once_flag m_InitFlag;
+
+};
 
 }  // namespace WaveletAnalyzer
+
+#endif /* _MEDIA_HPP_ */

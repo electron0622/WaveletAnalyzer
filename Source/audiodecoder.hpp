@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  main.cpp
+//  audiodecoder.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,38 +19,40 @@
 //
 //============================================================================
 
-#include <stdexcept>
-#include <wx/msgdlg.h>
-#include "main.hpp"
-#include "mainframe.hpp"
+#ifndef _AUDIODECODER_HPP_
+#define _AUDIODECODER_HPP_
+
+#include <queue>
+#include "media.hpp"
 
 namespace WaveletAnalyzer {
 
-using std::exception;
+using std::queue;
 
-IMPLEMENT_APP(MainApp)
+struct AudioInfo {
+    int ch;
+    int bits;
+    int samples;
+};
 
-bool MainApp::OnInit(void) {
-    try {
-        MainFrame *frame = new MainFrame(nullptr);
-        frame->Show(true);
-        SetTopWindow(frame);
-    }
-    catch(exception &e) {
-        const wxString message = e.what();
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
-        wxMessageBox(message, caption, style);
-        return false;
-    }
-    catch(...) {
-        const wxString message = wxT("An unknown error has occurred.");
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
-        wxMessageBox(message, caption, style);
-        return false;
-    }
-    return true;
-}
+class AudioDecoder : public Media {
+
+public:
+    AudioDecoder();
+    ~AudioDecoder();
+
+public:
+    bool   Open(const char *path);
+    void   Close(void);
+    size_t Read(int *data, size_t num);
+    size_t Seek(size_t offset);
+    bool   GetInfo(AudioInfo *info);
+
+private:
+    queue<int> m_RingBuffer;
+
+};
 
 }  // namespace WaveletAnalyzer
+
+#endif /* _AUDIODECODER_HPP_ */

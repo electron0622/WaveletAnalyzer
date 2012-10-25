@@ -49,8 +49,7 @@ void MainFrame::OnMenuDevice(wxCommandEvent &event) {
 }
 
 void MainFrame::OnMenuClose(wxCommandEvent &event) {
-    delete m_Player;
-    m_Player = nullptr;
+    CloseStream();
     return;
 }
 

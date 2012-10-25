@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  main.cpp
+//  media.cpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,38 +19,21 @@
 //
 //============================================================================
 
-#include <stdexcept>
-#include <wx/msgdlg.h>
-#include "main.hpp"
-#include "mainframe.hpp"
+#define __STDC_CONSTANT_MACROS
+extern "C" {
+#include <libavformat/avformat.h>
+}
+#include "media.hpp"
 
 namespace WaveletAnalyzer {
 
-using std::exception;
-
-IMPLEMENT_APP(MainApp)
-
-bool MainApp::OnInit(void) {
-    try {
-        MainFrame *frame = new MainFrame(nullptr);
-        frame->Show(true);
-        SetTopWindow(frame);
-    }
-    catch(exception &e) {
-        const wxString message = e.what();
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
-        wxMessageBox(message, caption, style);
-        return false;
-    }
-    catch(...) {
-        const wxString message = wxT("An unknown error has occurred.");
-        const wxString caption = wxT("Error");
-        const int      style   = wxOK|wxICON_ERROR;
-        wxMessageBox(message, caption, style);
-        return false;
-    }
-    return true;
+Media::Media() {
+    call_once(m_InitFlag, [](){ av_register_all(); });
 }
+
+Media::~Media() {
+}
+
+once_flag Media::m_InitFlag;
 
 }  // namespace WaveletAnalyzer

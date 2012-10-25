@@ -19,9 +19,9 @@
 //
 //============================================================================
 
-//#include <stdexcept>
 #include <functional>
 #include <unistd.h>
+#include "audiodecoder.hpp"
 #include "player.hpp"
 
 namespace WaveletAnalyzer {
