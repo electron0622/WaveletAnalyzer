@@ -28,6 +28,8 @@ namespace WaveletAnalyzer {
 
 using std::thread;
 
+class AudioReader;
+
 class Player {
 
 public:
@@ -49,11 +51,12 @@ private:
     void Reset(void);
 
 private:
-    thread *m_Thread;
-    bool    m_PlayFlag;
-    bool    m_RecordFlag;
-    bool    m_StopFlag;
-    bool    m_EndFlag;
+    AudioReader *m_pReader;
+    thread      *m_pThread;
+    bool         m_PlayFlag;
+    bool         m_RecordFlag;
+    bool         m_StopFlag;
+    bool         m_EndFlag;
 
 };
 

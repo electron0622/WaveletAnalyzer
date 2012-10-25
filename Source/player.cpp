@@ -19,8 +19,8 @@
 //
 //============================================================================
 
-#include <functional>
 #include <unistd.h>
+#include <functional>
 #include "audiodecoder.hpp"
 #include "player.hpp"
 
@@ -28,17 +28,31 @@ namespace WaveletAnalyzer {
 
 using std::bind;
 
-Player::Player() : m_PlayFlag(false), m_RecordFlag(false), m_StopFlag(false), m_EndFlag(false) {
-    m_Thread = new thread(bind(&Player::Main, this));
+Player::Player() : m_pReader(nullptr), m_pThread(nullptr),
+        m_PlayFlag(false), m_RecordFlag(false),
+        m_StopFlag(false), m_EndFlag(false) {
 }
 
 Player::~Player() {
-    m_EndFlag = true;
-    m_Thread->join();
-    delete m_Thread;
+    if(m_pThread) {
+        m_EndFlag = true;
+        m_pThread->join();
+    }
+    delete m_pThread;
+    delete m_pReader;
 }
 
 bool Player::Init(const char *path) {
+    if(m_pThread) return false;
+    m_pReader = new AudioDecoder(path);
+    if(!m_pReader->IsOpen()) {
+        delete m_pReader;
+        m_pReader = nullptr;
+        return false;
+    }
+    auto ch = m_pReader->GetNumChannels();
+    auto sr = m_pReader->GetSampleRate();
+    m_pThread = new thread(bind(&Player::Main, this));
     return true;
 }
 
@@ -78,10 +92,16 @@ void Player::Main(void) {
 }
 
 void Player::Update(void) {
+//    int data[4096];
+//    m_pDecoder->Read(data, 4096);
     return;
 }
 
 void Player::Reset(void) {
+    m_pReader->SeekSet();
+    m_PlayFlag   = false;
+    m_RecordFlag = false;
+    m_StopFlag   = false;
     return;
 }
 

@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  media.cpp
+//  audioreader.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,21 +19,26 @@
 //
 //============================================================================
 
-#define __STDC_CONSTANT_MACROS
-extern "C" {
-#include <libavformat/avformat.h>
-}
-#include "media.hpp"
+#ifndef _AUDIOREADER_HPP_
+#define _AUDIOREADER_HPP_
 
 namespace WaveletAnalyzer {
 
-Media::Media() : m_pFormatContext(nullptr), m_pCodecContext(nullptr) {
-    call_once(m_InitFlag, av_register_all);
-}
+class AudioReader {
 
-Media::~Media() {
-}
+public:
+    AudioReader();
+    virtual ~AudioReader();
 
-once_flag Media::m_InitFlag;
+public:
+    virtual bool   IsOpen(void);
+    virtual void   SeekSet(void);
+    virtual size_t Read(float *data, size_t num);
+    virtual size_t GetNumChannels(void);
+    virtual size_t GetSampleRate(void);
 
-}  // namespace WaveletAnalyzer
+};
+
+}  // namespace WaveletAnaryzer
+
+#endif /* _AUDIOREADER_HPP_ */

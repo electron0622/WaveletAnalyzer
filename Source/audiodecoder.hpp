@@ -22,34 +22,40 @@
 #ifndef _AUDIODECODER_HPP_
 #define _AUDIODECODER_HPP_
 
+#include <thread>
+#include <mutex>
 #include <queue>
+#include "audioreader.hpp"
 #include "media.hpp"
 
 namespace WaveletAnalyzer {
 
+using std::thread;
+using std::mutex;
 using std::queue;
 
-struct AudioInfo {
-    int ch;
-    int bits;
-    int samples;
-};
-
-class AudioDecoder : public Media {
+class AudioDecoder : public AudioReader, public Media {
 
 public:
-    AudioDecoder();
+    AudioDecoder(const char *path);
     ~AudioDecoder();
 
 public:
-    bool   Open(const char *path);
-    void   Close(void);
-    size_t Read(int *data, size_t num);
-    size_t Seek(size_t offset);
-    bool   GetInfo(AudioInfo *info);
+    bool   IsOpen(void);
+    void   SeekSet(void);
+    size_t Read(float *data, size_t num);
+    size_t GetNumChannels(void);
+    size_t GetSampleRate(void);
 
 private:
-    queue<int> m_RingBuffer;
+    void Main(void);
+
+private:
+    thread       m_Thread;
+    mutex        m_Mutex;
+    queue<float> m_Buffer;
+    bool         m_OpenFlag;
+    bool         m_SeekFlag;
 
 };
 
