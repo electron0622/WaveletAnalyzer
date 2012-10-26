@@ -28,6 +28,7 @@
 									<listOptionValue builtIn="false" value="C:\wxWidgets-2.8.12\include"/>
 									<listOptionValue builtIn="false" value="C:\wxWidgets-2.8.12\msw-ansi-debug-static-2.8\lib\wx\include\msw-ansi-debug-static-2.8"/>
 									<listOptionValue builtIn="false" value="C:\ffmpeg\include"/>
+									<listOptionValue builtIn="false" value="C:\portaudio\include"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.other.1294738093" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11 -std=gnu++11" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1443999669" name="定義済みのシンボル (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
@@ -41,6 +42,7 @@
 								<option id="gnu.c.compiler.mingw.exe.debug.option.debugging.level.2049473628" name="デバッグ・レベル" superClass="gnu.c.compiler.mingw.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1112146679" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="C:\ffmpeg\include"/>
+									<listOptionValue builtIn="false" value="C:\portaudio\include"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.521650980" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1980536878" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
@@ -52,6 +54,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.1814320741" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug.1407232471" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug">
 								<option id="gnu.cpp.link.option.libs.1572577764" name="ライブラリー (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="portaudio"/>
 									<listOptionValue builtIn="false" value="avformat"/>
 									<listOptionValue builtIn="false" value="avcodec"/>
 									<listOptionValue builtIn="false" value="avutil"/>
@@ -81,6 +84,7 @@
 								<option id="gnu.cpp.link.option.paths.1084650427" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="C:\wxWidgets-2.8.12\msw-ansi-debug-static-2.8\lib"/>
 									<listOptionValue builtIn="false" value="C:\ffmpeg\lib"/>
+									<listOptionValue builtIn="false" value="C:\portaudio\lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.469752811" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -120,9 +124,10 @@
 									<listOptionValue builtIn="false" value="C:\wxWidgets-2.8.12\include"/>
 									<listOptionValue builtIn="false" value="C:\wxWidgets-2.8.12\msw-ansi-release-static-2.8\lib\wx\include\msw-ansi-release-static-2.8"/>
 									<listOptionValue builtIn="false" value="C:\ffmpeg\include"/>
+									<listOptionValue builtIn="false" value="C:\portaudio\include"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.other.513772794" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11 -std=gnu++11" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.1685768047" name="定義済みのシンボル (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols"/>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.1685768047" name="定義済みのシンボル (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.377756403" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.1692281276" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release">
@@ -130,14 +135,16 @@
 								<option id="gnu.c.compiler.mingw.exe.release.option.debugging.level.1163631134" name="デバッグ・レベル" superClass="gnu.c.compiler.mingw.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1502853632" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="C:\ffmpeg\include"/>
+									<listOptionValue builtIn="false" value="C:\portaudio\include"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.762628813" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
-								<option id="gnu.c.compiler.option.preprocessor.def.symbols.729860920" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols"/>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.729860920" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.802355890" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.468055382" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release.1353199759" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release">
 								<option id="gnu.cpp.link.option.libs.1022338274" name="ライブラリー (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="portaudio.dll"/>
 									<listOptionValue builtIn="false" value="avformat"/>
 									<listOptionValue builtIn="false" value="avcodec"/>
 									<listOptionValue builtIn="false" value="avutil"/>
@@ -167,6 +174,7 @@
 								<option id="gnu.cpp.link.option.paths.1944931906" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="C:\wxWidgets-2.8.12\msw-ansi-release-static-2.8\lib"/>
 									<listOptionValue builtIn="false" value="C:\ffmpeg\lib"/>
+									<listOptionValue builtIn="false" value="C:\portaudio\lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.8064891" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

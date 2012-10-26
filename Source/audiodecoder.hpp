@@ -25,6 +25,7 @@
 #include <thread>
 #include <mutex>
 #include <queue>
+#include <deque>
 #include "audioreader.hpp"
 #include "media.hpp"
 
@@ -33,6 +34,7 @@ namespace WaveletAnalyzer {
 using std::thread;
 using std::mutex;
 using std::queue;
+using std::deque;
 
 class AudioDecoder : public AudioReader, public Media {
 
@@ -53,11 +55,12 @@ private:
 private:
     thread       m_Thread;
     mutex        m_Mutex;
-    queue<float> m_Buffer;
+    queue<float, deque<float>> m_Buffer;
     size_t       m_MaxBufNum;
+    int          m_Index;
     bool         m_OpenFlag;
     bool         m_SeekFlag;
-    int          m_Index;
+    bool         m_EndFlag;
 
 };
 

@@ -19,6 +19,7 @@
 //
 //============================================================================
 
+#include <portaudio.h>
 #include <unistd.h>
 #include <functional>
 #include "audiodecoder.hpp"
@@ -50,9 +51,6 @@ bool Player::Init(const char *path) {
         m_pReader = nullptr;
         return false;
     }
-    usleep(1000);
-    auto ch = m_pReader->GetNumChannels();
-    auto sr = m_pReader->GetSampleRate();
     m_pThread = new thread(bind(&Player::Main, this));
     return true;
 }
@@ -77,7 +75,35 @@ void Player::Stop(void) {
     return;
 }
 
+int callback( const void *inputBuffer, void *outputBuffer,
+        unsigned long framesPerBuffer,
+        const PaStreamCallbackTimeInfo* timeInfo,
+        PaStreamCallbackFlags statusFlags,
+        void *userData ) {
+    AudioReader *pReader = (AudioReader *)userData;
+    pReader->Read((float *)outputBuffer, framesPerBuffer<<1);
+    return 0;
+}
+
 void Player::Main(void) {
+    PaError err;
+    err = Pa_Initialize();
+    if(err != paNoError) {
+        Pa_Terminate();
+        return;
+    }
+    while(m_pReader->Read(nullptr, 0)<0x1000) usleep(1);
+    PaStream *stream;
+    err = Pa_OpenDefaultStream(&stream, 0, m_pReader->GetNumChannels(), paFloat32, m_pReader->GetSampleRate(), 512, callback, m_pReader);
+    if(err != paNoError) {
+        Pa_Terminate();
+        return;
+    }
+    err = Pa_StartStream(stream);
+    if(err != paNoError) {
+        Pa_Terminate();
+        return;
+    }
     while(!m_EndFlag) {
         if(m_StopFlag) {
             Reset();
@@ -89,6 +115,8 @@ void Player::Main(void) {
         }
         usleep(1);
     }
+    Pa_StopStream(stream);
+    Pa_Terminate();
     return;
 }
 

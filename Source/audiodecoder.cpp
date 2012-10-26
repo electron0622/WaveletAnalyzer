@@ -102,20 +102,83 @@ size_t AudioDecoder::GetSampleRate(void) {
 
 void AudioDecoder::Main(void) {
     AVPacket packet;
-    int      finished = 0;
-    AVFrame *frame    = avcodec_alloc_frame();
+    AVFrame  frame;
     av_init_packet(&packet);
-    size_t  size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-    uint8_t data[size];
-    packet.data = data;
-    packet.size = size;
-    while(m_OpenFlag && av_read_frame(m_pFormatContext, &packet) >= 0) {
-        if(packet.stream_index == m_Index) {
-            avcodec_decode_audio4(m_pCodecContext, frame, &finished, &packet);
+    avcodec_get_frame_defaults(&frame);
+    int finished = 0;
+    while(m_OpenFlag) {
+        if(m_SeekFlag) {
+            m_Buffer.clear();
+            m_SeekFlag = false;
+            m_EndFlag  = false;
         }
-        usleep(1);
+        if(m_EndFlag) {
+            usleep(1);
+            continue;
+        }
+        if(m_Buffer.size() >= m_MaxBufNum) {
+            usleep(1);
+            continue;
+        }
+        if(av_read_frame(m_pFormatContext, &packet) < 0) {
+            m_EndFlag = true;
+            continue;
+        }
+        if(packet.stream_index == m_Index) {
+            avcodec_decode_audio4(m_pCodecContext, &frame, &finished, &packet);
+            if(finished) {
+                switch(m_pCodecContext->sample_fmt) {
+                case AV_SAMPLE_FMT_U8:
+                    {
+                        uint8_t *data = (uint8_t *)(frame.extended_data[0]);
+                        size_t   size = frame.linesize[0];
+                        for(size_t i = 0; i < size; i++) {
+                            m_Buffer.push((data[i] - 128) * (1.0f / 128.0f));
+                        }
+                    }
+                    break;
+                case AV_SAMPLE_FMT_S16:
+                    {
+                        int16_t *data = (int16_t *)(frame.extended_data[0]);
+                        size_t   size = frame.linesize[0] >> 1;
+                        for(size_t i = 0; i < size; i++) {
+                            m_Buffer.push(data[i] * (1.0f / 32768.0f));
+                        }
+                    }
+                    break;
+                case AV_SAMPLE_FMT_S32:
+                    {
+                        int32_t *data = (int32_t *)(frame.extended_data[0]);
+                        size_t   size = frame.linesize[0] >> 2;
+                        for(size_t i = 0; i < size; i++) {
+                            m_Buffer.push(data[i] * (1.0f / 2147483648.0f));
+                        }
+                    }
+                    break;
+                case AV_SAMPLE_FMT_FLT:
+                    {
+                        float *data = (float *)(frame.extended_data[0]);
+                        size_t size = frame.linesize[0] >> 2;
+                        for(size_t i = 0; i < size; i++) {
+                            m_Buffer.push(data[i]);
+                        }
+                    }
+                    break;
+                case AV_SAMPLE_FMT_DBL:
+                    {
+                        double *data = (double *)(frame.extended_data[0]);
+                        size_t size = frame.linesize[0] >> 3;
+                        for(size_t i = 0; i < size; i++) {
+                            m_Buffer.push(data[i]);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
     }
-    av_free(frame);
     return;
 }
 
