@@ -34,6 +34,9 @@ public:
     ~MainFrame();
 
 private:
+    void OnWindowClose(wxCloseEvent &event);
+
+private:
     void OnMenuOpen(wxCommandEvent &event);
     void OnMenuDevice(wxCommandEvent &event);
     void OnMenuClose(wxCommandEvent &event);

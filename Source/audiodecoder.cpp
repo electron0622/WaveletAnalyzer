@@ -33,7 +33,7 @@ namespace WaveletAnalyzer {
 using std::bind;
 
 AudioDecoder::AudioDecoder(const char *path, size_t cache) :
-        m_MaxBufNum(cache >> 2), m_OpenFlag(false), m_SeekFlag(false) {
+        m_MaxBufNum(cache >> 2), m_OpenFlag(false), m_SeekFlag(false), m_EndFlag(false) {
     auto ppfc = &m_pFormatContext;
     if(avformat_open_input(ppfc, path, nullptr, nullptr)) return;
     auto pfc = *ppfc;
@@ -87,7 +87,7 @@ size_t AudioDecoder::Read(float *data, size_t num) {
             break;
         }
         data[i] = m_Buffer.front();
-        m_Buffer.pop();
+        m_Buffer.pop_front();
     }
     return num;
 }
@@ -109,6 +109,10 @@ void AudioDecoder::Main(void) {
     while(m_OpenFlag) {
         if(m_SeekFlag) {
             m_Buffer.clear();
+            {
+//                queue<float> tmp;
+//                m_Buffer.swap(tmp);
+            }
             m_SeekFlag = false;
             m_EndFlag  = false;
         }
@@ -133,7 +137,7 @@ void AudioDecoder::Main(void) {
                         uint8_t *data = (uint8_t *)(frame.extended_data[0]);
                         size_t   size = frame.linesize[0];
                         for(size_t i = 0; i < size; i++) {
-                            m_Buffer.push((data[i] - 128) * (1.0f / 128.0f));
+                            m_Buffer.push_back((data[i] - 128) * (1.0f / 128.0f));
                         }
                     }
                     break;
@@ -142,7 +146,7 @@ void AudioDecoder::Main(void) {
                         int16_t *data = (int16_t *)(frame.extended_data[0]);
                         size_t   size = frame.linesize[0] >> 1;
                         for(size_t i = 0; i < size; i++) {
-                            m_Buffer.push(data[i] * (1.0f / 32768.0f));
+                            m_Buffer.push_back(data[i] * (1.0f / 32768.0f));
                         }
                     }
                     break;
@@ -151,7 +155,7 @@ void AudioDecoder::Main(void) {
                         int32_t *data = (int32_t *)(frame.extended_data[0]);
                         size_t   size = frame.linesize[0] >> 2;
                         for(size_t i = 0; i < size; i++) {
-                            m_Buffer.push(data[i] * (1.0f / 2147483648.0f));
+                            m_Buffer.push_back(data[i] * (1.0f / 2147483648.0f));
                         }
                     }
                     break;
@@ -160,7 +164,7 @@ void AudioDecoder::Main(void) {
                         float *data = (float *)(frame.extended_data[0]);
                         size_t size = frame.linesize[0] >> 2;
                         for(size_t i = 0; i < size; i++) {
-                            m_Buffer.push(data[i]);
+                            m_Buffer.push_back(data[i]);
                         }
                     }
                     break;
@@ -169,7 +173,7 @@ void AudioDecoder::Main(void) {
                         double *data = (double *)(frame.extended_data[0]);
                         size_t size = frame.linesize[0] >> 3;
                         for(size_t i = 0; i < size; i++) {
-                            m_Buffer.push(data[i]);
+                            m_Buffer.push_back(data[i]);
                         }
                     }
                     break;

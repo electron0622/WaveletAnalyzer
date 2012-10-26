@@ -54,6 +54,7 @@ namespace WaveletAnalyzer
 			wxStatusBar* mStatusBar;
 			
 			// Virtual event handlers, overide them in your derived class
+			virtual void OnWindowClose( wxCloseEvent& event ) { event.Skip(); }
 			virtual void OnMenuOpen( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnMenuDevice( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnMenuClose( wxCommandEvent& event ) { event.Skip(); }

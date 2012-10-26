@@ -19,8 +19,8 @@
 //
 //============================================================================
 
-#include <stdexcept>
 #include <wx/msgdlg.h>
+#include <stdexcept>
 #include "main.hpp"
 #include "mainframe.hpp"
 

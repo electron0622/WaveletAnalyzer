@@ -21,6 +21,7 @@
 
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
+#include <wx/choicdlg.h>
 #include "aboutdialog.hpp"
 #include "mainframe.hpp"
 
@@ -34,17 +35,27 @@ MainFrame::~MainFrame() {
     delete m_Player;
 }
 
+void MainFrame::OnWindowClose(wxCloseEvent &event) {
+    if(CloseStream()) Destroy();
+    return;
+}
+
 void MainFrame::OnMenuOpen(wxCommandEvent &event) {
     if(!CloseStream()) return;
     wxFileDialog dialog(this);
     dialog.ShowModal();
     auto path = dialog.GetPath();
     if(path.IsEmpty()) return;
-    OpenStream(path.c_str());
+    OpenStream((const char *)path.GetData());
     return;
 }
 
 void MainFrame::OnMenuDevice(wxCommandEvent &event) {
+    wxArrayString arraystr;
+    arraystr.Add(wxT("test"));
+    wxPoint p;
+    wxSingleChoiceDialog dialog(this, wxT("Choose device"), wxT("Choose device"), arraystr);
+    dialog.ShowModal();
     return;
 }
 
@@ -54,7 +65,7 @@ void MainFrame::OnMenuClose(wxCommandEvent &event) {
 }
 
 void MainFrame::OnMenuExit(wxCommandEvent &event) {
-    if(CloseStream()) Close();
+    Close();
     return;
 }
 
@@ -65,6 +76,7 @@ void MainFrame::OnMenuAbout(wxCommandEvent &event) {
 }
 
 bool MainFrame::OpenStream(const char *path) {
+    if(m_Player) return false;
     m_Player = new Player;
     if(!m_Player->Init(path)) {
         const auto message = wxT("Cannot open the audio stream.");

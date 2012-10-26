@@ -80,6 +80,7 @@ IMainFrame::IMainFrame( wxWindow* parent, wxWindowID id, const wxString& title, 
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( IMainFrame::OnWindowClose ) );
 	this->Connect( mMenuItemOpen->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuOpen ) );
 	this->Connect( mMenuItemDevice->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuDevice ) );
 	this->Connect( mMenuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuClose ) );
@@ -90,6 +91,7 @@ IMainFrame::IMainFrame( wxWindow* parent, wxWindowID id, const wxString& title, 
 IMainFrame::~IMainFrame()
 {
 	// Disconnect Events
+	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( IMainFrame::OnWindowClose ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuOpen ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuDevice ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuClose ) );
