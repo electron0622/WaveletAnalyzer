@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  mainframe.hpp
+//  utility/io.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,41 +19,31 @@
 //
 //============================================================================
 
-#ifndef _MAINFRAME_HPP_
-#define _MAINFRAME_HPP_
-
-#include "frame.h"
-#include "player.hpp"
+#ifndef _UTILITY_IO_HPP_
+#define _UTILITY_IO_HPP_
 
 namespace WaveletAnalyzer {
 
-class MainFrame : public IMainFrame {
+namespace Utility {
+
+class IO {
 
 public:
-    MainFrame(wxWindow *parent);
-    ~MainFrame();
+    virtual ~IO();
 
-private:
-    void OnWindowClose(wxCloseEvent &event);
-
-private:
-    void OnMenuOpen(wxCommandEvent &event);
-    void OnMenuDevice(wxCommandEvent &event);
-    void OnMenuClose(wxCommandEvent &event);
-    void OnMenuExit(wxCommandEvent &event);
-
-private:
-    void OnMenuAbout(wxCommandEvent &event);
-
-private:
-    bool OpenStream(const char *name, bool mode);
-    bool CloseStream(void);
-
-private:
-    Player *m_Player;
+public:
+    virtual bool   Open(const char *name);
+    virtual bool   Open(const wchar_t *name);
+    virtual void   Close(void);
+    virtual size_t Read(void *data, size_t size);
+    virtual size_t Write(const void *data, size_t size);
+    virtual bool   Seek(size_t offset);
+    virtual size_t Tell(void);
 
 };
 
+}  // namespace Utility
+
 }  // namespace WaveletAnalyzer
 
-#endif /* _MAINFRAME_HPP_ */
+#endif /* _UTILITY_IO_HPP_ */

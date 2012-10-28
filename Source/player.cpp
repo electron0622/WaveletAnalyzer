@@ -19,17 +19,16 @@
 //
 //============================================================================
 
-#include <portaudio.h>
 #include <unistd.h>
 #include <functional>
-#include "audiodecoder.hpp"
 #include "player.hpp"
+#include "audio/device/writer.hpp"
 
 namespace WaveletAnalyzer {
 
 using std::bind;
 
-Player::Player() : m_pReader(nullptr), m_pThread(nullptr),
+Player::Player() : m_pReader(MakeAudioReader()), m_pThread(nullptr),
         m_PlayFlag(false), m_RecordFlag(false),
         m_StopFlag(false), m_EndFlag(false) {
 }
@@ -40,17 +39,12 @@ Player::~Player() {
         m_pThread->join();
     }
     delete m_pThread;
-    delete m_pReader;
 }
 
-bool Player::Init(const char *path) {
+bool Player::Init(const AudioReaderPtr &pReader) {
     if(m_pThread) return false;
-    m_pReader = new AudioDecoder(path, 0x10000);
-    if(!m_pReader->IsOpen()) {
-        delete m_pReader;
-        m_pReader = nullptr;
-        return false;
-    }
+    m_pReader = pReader;
+    if(!m_pReader->IsOpen()) return false;
     m_pThread = new thread(bind(&Player::Main, this));
     return true;
 }
@@ -75,36 +69,20 @@ void Player::Stop(void) {
     return;
 }
 
-int callback( const void *inputBuffer, void *outputBuffer,
-        unsigned long framesPerBuffer,
-        const PaStreamCallbackTimeInfo* timeInfo,
-        PaStreamCallbackFlags statusFlags,
-        void *userData ) {
-    AudioReader *pReader = (AudioReader *)userData;
-    pReader->Read((float *)outputBuffer, framesPerBuffer<<1);
-    return 0;
+void Player::Func(const void *in, void *out, size_t count) {
+    m_pReader->Read((float *)out, count << 1);
+    return;
 }
 
+#include <stdio.h>
 void Player::Main(void) {
-    PaError err;
-    err = Pa_Initialize();
-    if(err != paNoError) {
-        Pa_Terminate();
-        return;
-    }
-    while(m_pReader->Read(nullptr, 0)<0x1000) usleep(1);
-    PaStream *stream;
-    err = Pa_OpenDefaultStream(&stream, 0, m_pReader->GetNumChannels(), paFloat32, m_pReader->GetSampleRate(), 512, callback, m_pReader);
-    if(err != paNoError) {
-        Pa_Terminate();
-        return;
-    }
-    err = Pa_StartStream(stream);
-    if(err != paNoError) {
-        Pa_Terminate();
-        return;
-    }
+    Audio::Device::Writer device;
+    while(m_pReader->Read(nullptr, 0)<0x800) usleep(1);
+    device.SetSampleRate(m_pReader->GetSampleRate());
+    device.SetNumChannels(m_pReader->GetNumChannels());
+    if(!device.Open(device.GetDefaultDeviceName())) return;
     while(!m_EndFlag) {
+        printf("%10.3f\n", (double)device.Tell()/(m_pReader->GetSampleRate()*m_pReader->GetNumChannels()*sizeof(float)));
         if(m_StopFlag) {
             Reset();
             continue;
@@ -114,9 +92,12 @@ void Player::Main(void) {
             continue;
         }
         usleep(1);
+        float tmp[0x800];
+        if(device.Write(nullptr, 0) <= 0x800*sizeof(float)) continue;
+        m_pReader->Read(tmp, 0x800);
+        device.Write(tmp, 0x800*sizeof(float));
     }
-    Pa_StopStream(stream);
-    Pa_Terminate();
+    device.Close();
     return;
 }
 

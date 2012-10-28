@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  mainframe.hpp
+//  audio/file/ffmpegwrapper.cpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,41 +19,55 @@
 //
 //============================================================================
 
-#ifndef _MAINFRAME_HPP_
-#define _MAINFRAME_HPP_
-
-#include "frame.h"
-#include "player.hpp"
+#include "ffmpegwrapper.hpp"
 
 namespace WaveletAnalyzer {
 
-class MainFrame : public IMainFrame {
+namespace Audio {
 
-public:
-    MainFrame(wxWindow *parent);
-    ~MainFrame();
+namespace File {
 
-private:
-    void OnWindowClose(wxCloseEvent &event);
+FFmpegWrapper::FFmpegWrapper() {
+    auto init = [](void) {
+        av_register_all();
+        return;
+    };
+    call_once(m_InitFlag, init);
+}
 
-private:
-    void OnMenuOpen(wxCommandEvent &event);
-    void OnMenuDevice(wxCommandEvent &event);
-    void OnMenuClose(wxCommandEvent &event);
-    void OnMenuExit(wxCommandEvent &event);
+FFmpegWrapper::~FFmpegWrapper() {
+    Close();
+}
 
-private:
-    void OnMenuAbout(wxCommandEvent &event);
+bool FFmpegWrapper::Open(const char *name,
+        SampleFormat &sfmt, const Callback &func) {
+    return true;
+}
 
-private:
-    bool OpenStream(const char *name, bool mode);
-    bool CloseStream(void);
+void FFmpegWrapper::Close(void) {
+    return;
+}
 
-private:
-    Player *m_Player;
+void FFmpegWrapper::Start(void) const {
+    return;
+}
 
-};
+void FFmpegWrapper::Stop(void) const {
+    return;
+}
 
-}  // namespace WaveletAnalyzer
+double FFmpegWrapper::GetTime(void) const {
+    return 0.0;
+}
 
-#endif /* _MAINFRAME_HPP_ */
+void FFmpegWrapper::Main(void) {
+    return;
+}
+
+once_flag FFmpegWrapper::m_InitFlag;
+
+}  // namespace File
+
+}  // namespace Audio
+
+}  // namespace WaveletAnaryzer

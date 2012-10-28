@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  mainframe.hpp
+//  audio/file/ffmpegwrapper.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,41 +19,55 @@
 //
 //============================================================================
 
-#ifndef _MAINFRAME_HPP_
-#define _MAINFRAME_HPP_
+#ifndef _AUDIO_FILE_FFMPEGWRAPPER_HPP_
+#define _AUDIO_FILE_FFMPEGWRAPPER_HPP_
 
-#include "frame.h"
-#include "player.hpp"
+#define __STDC_CONSTANT_MACROS
+extern "C" {
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+}
+#include <mutex>
+#include "../format.hpp"
 
 namespace WaveletAnalyzer {
 
-class MainFrame : public IMainFrame {
+namespace Audio {
+
+namespace File {
+
+using std::call_once;
+using std::once_flag;
+
+class FFmpegWrapper {
 
 public:
-    MainFrame(wxWindow *parent);
-    ~MainFrame();
+    FFmpegWrapper();
+    virtual ~FFmpegWrapper();
+
+public:
+    bool Open(const char *name, SampleFormat &sfmt, const Callback &func);
+    void Close(void);
+
+public:
+    void Start(void) const;
+    void Stop(void) const;
+
+public:
+    double GetTime(void) const;
 
 private:
-    void OnWindowClose(wxCloseEvent &event);
+    void Main(void);
 
 private:
-    void OnMenuOpen(wxCommandEvent &event);
-    void OnMenuDevice(wxCommandEvent &event);
-    void OnMenuClose(wxCommandEvent &event);
-    void OnMenuExit(wxCommandEvent &event);
-
-private:
-    void OnMenuAbout(wxCommandEvent &event);
-
-private:
-    bool OpenStream(const char *name, bool mode);
-    bool CloseStream(void);
-
-private:
-    Player *m_Player;
+    static once_flag m_InitFlag;
 
 };
 
-}  // namespace WaveletAnalyzer
+}  // namespace File
 
-#endif /* _MAINFRAME_HPP_ */
+}  // namespace Audio
+
+}  // namespace WaveletAnaryzer
+
+#endif /* _AUDIO_FILE_FFMPEGWRAPPER_HPP_ */

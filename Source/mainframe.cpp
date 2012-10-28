@@ -24,6 +24,8 @@
 #include <wx/choicdlg.h>
 #include "aboutdialog.hpp"
 #include "mainframe.hpp"
+#include "audiodecoder.hpp"
+#include "audio/device/reader.hpp"
 
 namespace WaveletAnalyzer {
 
@@ -42,20 +44,27 @@ void MainFrame::OnWindowClose(wxCloseEvent &event) {
 
 void MainFrame::OnMenuOpen(wxCommandEvent &event) {
     if(!CloseStream()) return;
-    wxFileDialog dialog(this);
+    const auto message = wxT("Select a file");
+    wxFileDialog dialog(this, message);
     dialog.ShowModal();
-    auto path = dialog.GetPath();
-    if(path.IsEmpty()) return;
-    OpenStream((const char *)path.GetData());
+    auto name = dialog.GetPath();
+    if(name.IsEmpty()) return;
+    OpenStream((const char *)name.GetData(), false);
     return;
 }
 
 void MainFrame::OnMenuDevice(wxCommandEvent &event) {
-    wxArrayString arraystr;
-    arraystr.Add(wxT("test"));
-    wxPoint p;
-    wxSingleChoiceDialog dialog(this, wxT("Choose device"), wxT("Choose device"), arraystr);
+    Audio::Device::Reader reader;
+    int num = reader.GetDeviceCount();
+    wxArrayString devlist;
+    for(int i = 0; i < num; i++) devlist.Add(reader.GetDeviceName(i));
+    const auto message = wxT("Audio capture device:");
+    const auto caption = wxT("Select a device");
+    wxSingleChoiceDialog dialog(this, message, caption, devlist);
     dialog.ShowModal();
+    auto name = dialog.GetStringSelection();
+    if(name.IsEmpty()) return;
+    reader.Open(name.GetData());
     return;
 }
 
@@ -75,10 +84,10 @@ void MainFrame::OnMenuAbout(wxCommandEvent &event) {
     return;
 }
 
-bool MainFrame::OpenStream(const char *path) {
+bool MainFrame::OpenStream(const char *name, bool mode) {
     if(m_Player) return false;
     m_Player = new Player;
-    if(!m_Player->Init(path)) {
+    if(!m_Player->Init(MakeAudioDecoder(name, 0x10000))) {
         const auto message = wxT("Cannot open the audio stream.");
         const auto caption = wxT("Error");
         const auto style   = wxOK|wxICON_ERROR;

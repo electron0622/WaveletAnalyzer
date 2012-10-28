@@ -22,13 +22,26 @@
 #ifndef _PLAYER_HPP_
 #define _PLAYER_HPP_
 
+#include <memory>
 #include <thread>
+#include "audioreader.hpp"
+#include "audiodecoder.hpp"
 
 namespace WaveletAnalyzer {
 
+using std::shared_ptr;
+using std::make_shared;
 using std::thread;
 
-class AudioReader;
+typedef shared_ptr<AudioReader> AudioReaderPtr;
+
+inline AudioReaderPtr MakeAudioReader(void) {
+    return make_shared<AudioReader>();
+}
+
+inline AudioReaderPtr MakeAudioDecoder(const char *path, int cache) {
+    return make_shared<AudioDecoder>(path, cache);
+}
 
 class Player {
 
@@ -37,7 +50,7 @@ public:
     ~Player();
 
 public:
-    bool Init(const char *path);
+    bool Init(const AudioReaderPtr &pReader);
 
 public:
     void Play(void);
@@ -46,17 +59,18 @@ public:
     void Stop(void);
 
 private:
+    void Func(const void *in, void *out, size_t count);
     void Main(void);
     void Update(void);
     void Reset(void);
 
 private:
-    AudioReader *m_pReader;
-    thread      *m_pThread;
-    bool         m_PlayFlag;
-    bool         m_RecordFlag;
-    bool         m_StopFlag;
-    bool         m_EndFlag;
+    AudioReaderPtr m_pReader;
+    thread*        m_pThread;
+    bool           m_PlayFlag;
+    bool           m_RecordFlag;
+    bool           m_StopFlag;
+    bool           m_EndFlag;
 
 };
 
