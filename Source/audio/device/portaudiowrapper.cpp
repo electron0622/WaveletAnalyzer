@@ -153,13 +153,13 @@ void PortAudioWrapper::Close(void) {
     return;
 }
 
-void PortAudioWrapper::Start(void) const {
+void PortAudioWrapper::Start(void) {
     if(!m_pStream) return;
     Pa_StartStream(m_pStream);
     return;
 }
 
-void PortAudioWrapper::Stop(void) const {
+void PortAudioWrapper::Stop(void) {
     if(!m_pStream) return;
     Pa_StopStream(m_pStream);
     return;

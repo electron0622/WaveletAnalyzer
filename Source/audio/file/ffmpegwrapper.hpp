@@ -46,18 +46,21 @@ public:
     virtual ~FFmpegWrapper();
 
 public:
-    bool Open(const char *name, SampleFormat &sfmt, const Callback &func);
-    void Close(void);
-
-public:
-    void Start(void) const;
-    void Stop(void) const;
-
-public:
-    double GetTime(void) const;
+    bool   Open(const char *name, SampleFormat &sfmt);
+    void   Close(void);
+    size_t Read(void *data, size_t size);
+    bool   Seek(size_t offset);
+    size_t Tell(void);
 
 private:
-    void Main(void);
+    AVFormatContext *m_pFormatContext;
+    AVCodecContext  *m_pCodecContext;
+    AVPacket        *m_pPacket;
+    AVFrame         *m_pFrame;
+    SampleFormat    *m_pSampleFmt;
+    size_t           m_ReadPos;
+    int              m_Finished;
+    unsigned int     m_StreamIndex;
 
 private:
     static once_flag m_InitFlag;

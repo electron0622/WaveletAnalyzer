@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  utility/io.cpp
+//  util/io.cpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -24,7 +24,7 @@
 
 namespace WaveletAnalyzer {
 
-namespace Utility {
+namespace Util {
 
 IO::~IO() {
 }
@@ -57,6 +57,6 @@ size_t IO::Tell(void) {
     return 0;
 }
 
-}  // namespace Utility
+}  // namespace Util
 
 }  // namespace WaveletAnalyzer

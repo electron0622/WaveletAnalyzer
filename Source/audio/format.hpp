@@ -22,15 +22,9 @@
 #ifndef _AUDIO_FORMAT_HPP_
 #define _AUDIO_FORMAT_HPP_
 
-#include <functional>
-
 namespace WaveletAnalyzer {
 
 namespace Audio {
-
-using std::function;
-
-typedef function<void (const void *, void *, size_t)> Callback;
 
 enum BitFormat {
     BF_VOID,

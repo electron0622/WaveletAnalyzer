@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  utility/io.hpp
+//  util/io.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,12 +19,12 @@
 //
 //============================================================================
 
-#ifndef _UTILITY_IO_HPP_
-#define _UTILITY_IO_HPP_
+#ifndef _UTIL_IO_HPP_
+#define _UTIL_IO_HPP_
 
 namespace WaveletAnalyzer {
 
-namespace Utility {
+namespace Util {
 
 class IO {
 
@@ -42,8 +42,8 @@ public:
 
 };
 
-}  // namespace Utility
+}  // namespace Util
 
 }  // namespace WaveletAnalyzer
 
-#endif /* _UTILITY_IO_HPP_ */
+#endif /* _UTIL_IO_HPP_ */

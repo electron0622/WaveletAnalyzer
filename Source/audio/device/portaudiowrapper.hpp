@@ -25,6 +25,7 @@
 #include <portaudio.h>
 #include <stdexcept>
 #include <string>
+#include <functional>
 #include <mutex>
 #include "../format.hpp"
 
@@ -36,8 +37,11 @@ namespace Device {
 
 using std::exception;
 using std::string;
+using std::function;
 using std::call_once;
 using std::once_flag;
+
+typedef function<void (const void *, void *, size_t)> Callback;
 
 class PortAudioWrapper {
 
@@ -71,8 +75,8 @@ public:
     void Close(void);
 
 public:
-    void Start(void) const;
-    void Stop(void) const;
+    void Start(void);
+    void Stop(void);
 
 public:
     double GetTime(void) const;

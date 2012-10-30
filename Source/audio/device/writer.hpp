@@ -28,7 +28,7 @@
 #include <queue>
 #include <mutex>
 #include "portaudiowrapper.hpp"
-#include "../../utility/io.hpp"
+#include "../../util/io.hpp"
 
 namespace WaveletAnalyzer {
 
@@ -42,7 +42,7 @@ using std::vector;
 using std::queue;
 using std::mutex;
 
-class Writer : public Utility::IO, protected PortAudioWrapper {
+class Writer : public Util::IO, protected PortAudioWrapper {
 
 public:
     Writer();
