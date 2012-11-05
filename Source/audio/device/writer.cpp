@@ -61,7 +61,7 @@ void Writer::SetNumChannels(size_t ch) {
 }
 
 size_t Writer::GetCacheSize(void) const {
-    return m_MaxBufNum;
+    return m_MaxBufNum * sizeof(float);
 }
 
 size_t Writer::GetSampleRate(void) const {

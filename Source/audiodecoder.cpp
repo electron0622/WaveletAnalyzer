@@ -109,10 +109,6 @@ void AudioDecoder::Main(void) {
     while(m_OpenFlag) {
         if(m_SeekFlag) {
             m_Buffer.clear();
-            {
-//                queue<float> tmp;
-//                m_Buffer.swap(tmp);
-            }
             m_SeekFlag = false;
             m_EndFlag  = false;
         }

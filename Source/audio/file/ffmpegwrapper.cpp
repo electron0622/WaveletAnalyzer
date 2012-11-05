@@ -19,6 +19,7 @@
 //
 //============================================================================
 
+#include <queue>
 #include "ffmpegwrapper.hpp"
 
 namespace WaveletAnalyzer {
@@ -27,14 +28,11 @@ namespace Audio {
 
 namespace File {
 
-template<class _OUT, class _IN>
-static void convert(_OUT *dst, _IN *src, _OUT scale, size_t num) {
-    for(size_t i = 0; i < num; i++) dst[i] = src[i] * scale;
-    return;
-}
+using std::queue;
 
 FFmpegWrapper::FFmpegWrapper() : m_pFormatContext(nullptr),
-        m_pCodecContext(nullptr), m_Index(0) {
+        m_pCodecContext(nullptr), m_pPacket(nullptr),
+        m_pFrame(nullptr), m_StreamIndex(0) {
     auto init = [](void) {
         av_register_all();
         return;
@@ -46,8 +44,16 @@ FFmpegWrapper::~FFmpegWrapper() {
     Close();
 }
 
-bool FFmpegWrapper::Open(const char *name, SampleFormat *psfmt) {
-    if(!name || !psfmt) return false;
+size_t FFmpegWrapper::GetSampleRate(void) const {
+    return (size_t)m_pCodecContext->sample_rate;
+}
+
+size_t FFmpegWrapper::GetNumChannels(void) const {
+    return (size_t)m_pCodecContext->channels;
+}
+
+bool FFmpegWrapper::Open(const char *name, SampleFormat &sfmt) {
+    if(!name) return false;
     Close();
     auto ppfc = &m_pFormatContext;
     if(avformat_open_input(ppfc, name, nullptr, nullptr)) return false;
@@ -69,91 +75,50 @@ bool FFmpegWrapper::Open(const char *name, SampleFormat *psfmt) {
     auto pcc = avcodec_alloc_context3(codec);
     m_pCodecContext = pcc;
     if(!pcc || avcodec_open2(pcc, codec, nullptr) < 0) return false;
-    m_pPacket = (AVPacket *)av_malloc(sizeof(AVPacket));
-    if(!m_pPacket) return false;
-    av_init_packet(m_pPacket);
-    m_pFrame = avcodec_alloc_frame();
-    if(!m_pFrame) return false;
-    avcodec_get_frame_defaults(m_pFrame);
-    m_pSampleFmt = psfmt;
-    m_ReadPos    = 0;
-    m_Finished   = 0;
+    auto ppacket = (AVPacket *)av_malloc(sizeof(AVPacket));
+    m_pPacket = ppacket;
+    if(!ppacket) return false;
+    av_init_packet(ppacket);
+    auto pframe = avcodec_alloc_frame();
+    m_pFrame = pframe;
+    if(!pframe) return false;
+    avcodec_get_frame_defaults(pframe);
+    sfmt.SampleRate  = pcc->sample_rate;
+    sfmt.NumChannels = pcc->channels;
+    switch(pcc->sample_fmt) {
+    case AV_SAMPLE_FMT_U8:  sfmt.FormatId = BF_U8;   break;
+    case AV_SAMPLE_FMT_S16: sfmt.FormatId = BF_S16;  break;
+    case AV_SAMPLE_FMT_S32: sfmt.FormatId = BF_S32;  break;
+    case AV_SAMPLE_FMT_FLT: sfmt.FormatId = BF_F32;  break;
+    case AV_SAMPLE_FMT_DBL: sfmt.FormatId = BF_F64;  break;
+    default:                sfmt.FormatId = BF_VOID; break;
+    }
     return true;
 }
 
 void FFmpegWrapper::Close(void) {
-    auto frame = &m_pFrame;
-    avcodec_free_frame(frame);
-    auto pkt = m_pPacket;
-    if(pkt) {
-        av_free(pkt);
-        m_pPacket = nullptr;
-    }
-    auto pcc = m_pCodecContext;
-    if(pcc) {
-        avcodec_close(pcc);
-        av_free(pcc);
-        m_pPacket = nullptr;
-    }
+    auto ppframe = &m_pFrame;
+    avcodec_free_frame(ppframe);
+    auto pppacket = &m_pPacket;
+    av_freep(pppacket);
+    auto ppcc = &m_pCodecContext;
+    if(*ppcc) avcodec_close(*ppcc);
+    av_freep(ppcc);
     auto ppfc = &m_pFormatContext;
-    avformat_close_input(ppfc);
+    if(*ppfc) avformat_close_input(ppfc);
     return;
 }
 
 size_t FFmpegWrapper::Read(void *data, size_t size) {
-    auto pfc      = m_pFormatContext;
-    auto pcc      = m_pCodecContext;
-    auto ppkt     = m_pPacket;
-    auto pframe   = m_pFrame;
-    auto psfmt    = m_pSampleFmt;
-    auto pos      = m_ReadPos;
-    auto finished = m_Finished;
-    auto index    = m_StreamIndex;
-    size_t i = 0;
-    while(i < size) {
-        while(!pos) {
-            if(av_read_frame(pfc, ppkt) < 0) {
-                m_ReadPos  = pos;
-                m_Finished = finished;
-                return i;
-            }
-            if(ppkt->stream_index == index) {
-                avcodec_decode_audio4(pcc, pframe, &finished, ppkt);
-                if(finished) break;
-            }
-        }
-        if(psfmt) {
-            psfmt->SampleRate  = pcc->sample_rate;
-            psfmt->NumChannels = pcc->channels;
-            switch(pcc->sample_fmt) {
-            case AV_SAMPLE_FMT_U8:
-                psfmt->FormatId = BF_U8;
-                break;
-            case AV_SAMPLE_FMT_S16:
-                psfmt->FormatId = BF_S16;
-                break;
-            case AV_SAMPLE_FMT_S32:
-                psfmt->FormatId = BF_S32;
-                break;
-            case AV_SAMPLE_FMT_FLT:
-                psfmt->FormatId = BF_F32;
-                break;
-            case AV_SAMPLE_FMT_DBL:
-                psfmt->FormatId = BF_F64;
-                break;
-            default:
-                psfmt->FormatId = BF_VOID;
-                break;
-            }
-            m_pSampleFmt = nullptr;
-        }
-            {
-                double *data = (double *)(frame.extended_data[0]);
-                size_t size = frame.linesize[0] >> 3;
-                for(size_t i = 0; i < size; i++) {
-                    m_Buffer.push_back(data[i]);
-                }
-            }
+    if(!data) return 0;
+    auto pcc = m_pCodecContext;
+    switch(pcc->sample_fmt) {
+    case AV_SAMPLE_FMT_U8:   size = Decode((uint8_t *)data, size); break;
+    case AV_SAMPLE_FMT_S16:  size = Decode((int16_t *)data, size); break;
+    case AV_SAMPLE_FMT_S32:  size = Decode((int32_t *)data, size); break;
+    case AV_SAMPLE_FMT_FLT:  size = Decode((float   *)data, size); break;
+    case AV_SAMPLE_FMT_DBL:  size = Decode((double  *)data, size); break;
+    default:                 size = 0;                             break;
     }
     return size;
 }
@@ -162,8 +127,39 @@ bool FFmpegWrapper::Seek(size_t offset) {
     return false;
 }
 
-size_t FFmpegWrapper::Tell(void) {
-    return 0;
+template<class T>
+size_t FFmpegWrapper::Decode(T *data, size_t size) {
+    static queue<T> buf;
+    auto pfc      = m_pFormatContext;
+    auto pcc      = m_pCodecContext;
+    auto ppacket  = m_pPacket;
+    auto pframe   = m_pFrame;
+    auto index    = m_StreamIndex;
+    int  finished = 0;
+    size /= sizeof(T);
+    while(buf.size() < size) {
+        if(av_read_frame(pfc, ppacket) < 0) {
+            size = buf.size();
+            break;
+        }
+        if(ppacket->stream_index == (int)index) {
+            avcodec_decode_audio4(pcc, pframe, &finished, ppacket);
+            if(finished) {
+                T  *ptr = (T *)pframe->extended_data[0];
+                int num = pframe->linesize[0] / sizeof(T);
+                for(int i = 0; i < num; i++) buf.push(ptr[i]);
+            }
+        }
+    }
+    {
+        T *ptr = (T *)data;
+        for(size_t i = 0; i < size; i++) {
+            ptr[i] = buf.front();
+            buf.pop();
+        }
+    }
+    size *= sizeof(T);
+    return size;
 }
 
 once_flag FFmpegWrapper::m_InitFlag;

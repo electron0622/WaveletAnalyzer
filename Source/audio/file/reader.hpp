@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  audio/file/ffmpegwrapper.hpp
+//  audio/file/reader.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,16 +19,14 @@
 //
 //============================================================================
 
-#ifndef _AUDIO_FILE_FFMPEGWRAPPER_HPP_
-#define _AUDIO_FILE_FFMPEGWRAPPER_HPP_
+#ifndef _AUDIO_FILE_READER_HPP_
+#define _AUDIO_FILE_READER_HPP_
 
-#define __STDC_CONSTANT_MACROS
-extern "C" {
-#include <libavformat/avformat.h>
-#include <libavcodec/avcodec.h>
-}
+#include <thread>
 #include <mutex>
-#include "../format.hpp"
+#include <queue>
+#include "ffmpegwrapper.hpp"
+#include "../../util/io.hpp"
 
 namespace WaveletAnalyzer {
 
@@ -36,38 +34,43 @@ namespace Audio {
 
 namespace File {
 
-using std::call_once;
-using std::once_flag;
+using std::thread;
+using std::mutex;
+using std::queue;
 
-class FFmpegWrapper {
-
-public:
-    FFmpegWrapper();
-    virtual ~FFmpegWrapper();
+class Reader : protected FFmpegWrapper, public Util::IO {
 
 public:
+    Reader();
+    ~Reader();
+
+public:
+    void SetCacheSize(size_t size);
+    void SetSampleRate(size_t rate);
+    void SetNumChannels(size_t ch);
+
+public:
+    size_t GetCacheSize(void) const;
     size_t GetSampleRate(void) const;
     size_t GetNumChannels(void) const;
 
 public:
-    bool   Open(const char *name, SampleFormat &sfmt);
+    bool   Open(const char *name);
     void   Close(void);
     size_t Read(void *data, size_t size);
     bool   Seek(size_t offset);
+    size_t Tell(void);
 
 private:
-    template<class T>
-    size_t Decode(T *data, size_t size);
+    void Main(void);
 
 private:
-    AVFormatContext *m_pFormatContext;
-    AVCodecContext  *m_pCodecContext;
-    AVPacket        *m_pPacket;
-    AVFrame         *m_pFrame;
-    unsigned int     m_StreamIndex;
-
-private:
-    static once_flag m_InitFlag;
+    thread       m_Thread;
+    mutex        m_Mutex;
+    queue<float> m_Buffer;
+    SampleFormat m_SampleFormat;
+    size_t       m_MaxBufNum;
+    size_t       m_ReadPos;
 
 };
 
@@ -77,4 +80,4 @@ private:
 
 }  // namespace WaveletAnaryzer
 
-#endif /* _AUDIO_FILE_FFMPEGWRAPPER_HPP_ */
+#endif /* _AUDIO_FILE_READER_HPP_ */

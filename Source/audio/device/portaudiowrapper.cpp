@@ -85,23 +85,12 @@ bool PortAudioWrapper::Open(int id,
     if(m_pStream) return false;
     PaSampleFormat format;
     switch(sfmt.FormatId) {
-    case BF_S8:
-        format = paInt8;
-        break;
-    case BF_U8:
-        format = paUInt8;
-        break;
-    case BF_S16:
-        format = paInt16;
-        break;
-    case BF_S32:
-        format = paInt32;
-        break;
-    case BF_F32:
-        format = paFloat32;
-        break;
-    default:
-        return false;
+    case BF_S8:  format = paInt8;    break;
+    case BF_U8:  format = paUInt8;   break;
+    case BF_S16: format = paInt16;   break;
+    case BF_S32: format = paInt32;   break;
+    case BF_F32: format = paFloat32; break;
+    default: return false;
     }
     PaStreamParameters input, output;
     PaStreamParameters *pinput  = nullptr;

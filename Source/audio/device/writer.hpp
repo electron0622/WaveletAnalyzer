@@ -25,8 +25,8 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <queue>
 #include <mutex>
+#include <queue>
 #include "portaudiowrapper.hpp"
 #include "../../util/io.hpp"
 
@@ -39,10 +39,10 @@ namespace Device {
 using std::string;
 using std::map;
 using std::vector;
-using std::queue;
 using std::mutex;
+using std::queue;
 
-class Writer : public Util::IO, protected PortAudioWrapper {
+class Writer : protected PortAudioWrapper, public Util::IO {
 
 public:
     Writer();
@@ -76,8 +76,8 @@ private:
 private:
     map<string, int> m_DeviceMap;
     vector<int>      m_DeviceTable;
-    queue<float>     m_Buffer;
     mutex            m_Mutex;
+    queue<float>     m_Buffer;
     size_t           m_MaxBufNum;
     size_t           m_WritePos;
     size_t           m_SampleRate;

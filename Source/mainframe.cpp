@@ -19,6 +19,7 @@
 //
 //============================================================================
 
+#include "audio/file/ffmpegwrapper.hpp"
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/choicdlg.h>
@@ -86,6 +87,12 @@ void MainFrame::OnMenuAbout(wxCommandEvent &event) {
 
 bool MainFrame::OpenStream(const char *name, bool mode) {
     if(m_Player) return false;
+    Audio::File::FFmpegWrapper wrapper;
+    Audio::SampleFormat sfmt;
+    wrapper.Open(name, sfmt);
+    uint8_t data[0x1000];
+    wrapper.Read(data, 0x1000);
+    wrapper.Close();
     m_Player = new Player;
     if(!m_Player->Init(MakeAudioDecoder(name, 0x10000))) {
         const auto message = wxT("Cannot open the audio stream.");

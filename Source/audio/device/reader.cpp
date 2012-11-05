@@ -61,7 +61,7 @@ void Reader::SetNumChannels(size_t ch) {
 }
 
 size_t Reader::GetCacheSize(void) const {
-    return m_MaxBufNum;
+    return m_MaxBufNum * sizeof(float);
 }
 
 size_t Reader::GetSampleRate(void) const {
