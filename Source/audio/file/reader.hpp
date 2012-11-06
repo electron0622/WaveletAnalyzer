@@ -65,12 +65,17 @@ private:
     void Main(void);
 
 private:
+    template<class T>
+    void FillBuffer(T bias, float scale);
+
+private:
     thread       m_Thread;
     mutex        m_Mutex;
     queue<float> m_Buffer;
     SampleFormat m_SampleFormat;
     size_t       m_MaxBufNum;
     size_t       m_ReadPos;
+    bool         m_EndFlag;
 
 };
 

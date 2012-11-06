@@ -22,14 +22,14 @@
 #include <unistd.h>
 #include <functional>
 #include "player.hpp"
-#include "audio/device/writer.hpp"
+#include "util/io.hpp"
 
 namespace WaveletAnalyzer {
 
 using std::bind;
 
-Player::Player() : m_pReader(MakeAudioReader()), m_pThread(nullptr),
-        m_PlayFlag(false), m_RecordFlag(false),
+Player::Player() : m_pReader(nullptr), m_pWriter(nullptr),
+        m_pThread(nullptr), m_PlayFlag(false), m_RecordFlag(false),
         m_StopFlag(false), m_EndFlag(false) {
 }
 
@@ -41,10 +41,10 @@ Player::~Player() {
     delete m_pThread;
 }
 
-bool Player::Init(const AudioReaderPtr &pReader) {
-    if(m_pThread) return false;
+bool Player::Init(Util::IO *pReader, Util::IO *pWriter) {
+    if(m_pThread || !pReader || !pWriter) return false;
     m_pReader = pReader;
-    if(!m_pReader->IsOpen()) return false;
+    m_pWriter = pWriter;
     m_pThread = new thread(bind(&Player::Main, this));
     return true;
 }
@@ -69,20 +69,17 @@ void Player::Stop(void) {
     return;
 }
 
-void Player::Func(const void *in, void *out, size_t count) {
-    m_pReader->Read((float *)out, count << 1);
-    return;
-}
-
 #include <stdio.h>
 void Player::Main(void) {
+/*
     Audio::Device::Writer device;
     while(m_pReader->Read(nullptr, 0)<0x800) usleep(1);
     device.SetSampleRate(m_pReader->GetSampleRate());
     device.SetNumChannels(m_pReader->GetNumChannels());
     if(!device.Open(device.GetDefaultDeviceName())) return;
+*/
     while(!m_EndFlag) {
-        printf("%10.3f\n", (double)device.Tell()/(m_pReader->GetSampleRate()*m_pReader->GetNumChannels()*sizeof(float)));
+//        printf("%10.3f\n", (double)device.Tell()/(m_pReader->GetSampleRate()*m_pReader->GetNumChannels()*sizeof(float)));
         if(m_StopFlag) {
             Reset();
             continue;
@@ -93,11 +90,12 @@ void Player::Main(void) {
         }
         usleep(1);
         float tmp[0x800];
-        if(device.Write(nullptr, 0) <= 0x800*sizeof(float)) continue;
-        m_pReader->Read(tmp, 0x800);
-        device.Write(tmp, 0x800*sizeof(float));
+        if(m_pWriter->Write(nullptr, 0) <= 0x800 * sizeof(float)) continue;
+        m_pReader->Read(tmp, 0x800 * sizeof(float));
+        m_pWriter->Write(tmp, 0x800 * sizeof(float));
     }
-    device.Close();
+    m_pReader->Close();
+    m_pWriter->Close();
     return;
 }
 
@@ -108,7 +106,7 @@ void Player::Update(void) {
 }
 
 void Player::Reset(void) {
-    m_pReader->SeekSet();
+    m_pReader->Seek(0);
     m_PlayFlag   = false;
     m_RecordFlag = false;
     m_StopFlag   = false;

@@ -19,14 +19,16 @@
 //
 //============================================================================
 
-#include "audio/file/ffmpegwrapper.hpp"
+#include "audio/file/reader.hpp"
+#include "audio/device/reader.hpp"
+#include "audio/device/writer.hpp"
+#include <unistd.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/choicdlg.h>
 #include "aboutdialog.hpp"
 #include "mainframe.hpp"
 #include "audiodecoder.hpp"
-#include "audio/device/reader.hpp"
 
 namespace WaveletAnalyzer {
 
@@ -87,14 +89,15 @@ void MainFrame::OnMenuAbout(wxCommandEvent &event) {
 
 bool MainFrame::OpenStream(const char *name, bool mode) {
     if(m_Player) return false;
-    Audio::File::FFmpegWrapper wrapper;
-    Audio::SampleFormat sfmt;
-    wrapper.Open(name, sfmt);
-    uint8_t data[0x1000];
-    wrapper.Read(data, 0x1000);
-    wrapper.Close();
+    static Audio::File::Reader   reader;
+    static Audio::Device::Writer writer;
+    reader.Open(name);
+    while(reader.Read(nullptr, 0) < 0x800) usleep(1);
+    writer.SetSampleRate(reader.GetSampleRate());
+    writer.SetNumChannels(reader.GetNumChannels());
+    if(!writer.Open(writer.GetDefaultDeviceName())) return false;
     m_Player = new Player;
-    if(!m_Player->Init(MakeAudioDecoder(name, 0x10000))) {
+    if(!m_Player->Init(&reader, &writer)) {
         const auto message = wxT("Cannot open the audio stream.");
         const auto caption = wxT("Error");
         const auto style   = wxOK|wxICON_ERROR;
