@@ -27,7 +27,7 @@ namespace WaveletAnalyzer {
 namespace Audio {
 
 enum BitFormat {
-    BF_VOID,
+    BF_UNKNOWN,
     BF_S8,
     BF_U8,
     BF_S16,

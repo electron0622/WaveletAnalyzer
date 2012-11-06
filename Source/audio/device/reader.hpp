@@ -78,10 +78,9 @@ private:
     vector<int>      m_DeviceTable;
     mutex            m_Mutex;
     queue<float>     m_Buffer;
+    SampleFormat     m_SampleFormat;
     size_t           m_MaxBufNum;
     size_t           m_ReadPos;
-    size_t           m_SampleRate;
-    size_t           m_NumChannels;
 
 };
 

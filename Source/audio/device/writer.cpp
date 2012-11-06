@@ -33,8 +33,8 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using std::placeholders::_3;
 
-Writer::Writer() : m_MaxBufNum(0x4000), m_WritePos(0),
-        m_SampleRate(0), m_NumChannels(0) {
+Writer::Writer() : m_SampleFormat({0, 0, BF_F32}),
+        m_MaxBufNum(0x4000), m_WritePos(0) {
     int num = PortAudioWrapper::GetDeviceCount();
     for(int i = 0; i < num; i++) if(PortAudioWrapper::IsOutputDevice(i)){
         m_DeviceMap[PortAudioWrapper::GetDeviceName(i)] = i + 1;
@@ -43,6 +43,7 @@ Writer::Writer() : m_MaxBufNum(0x4000), m_WritePos(0),
 }
 
 Writer::~Writer() {
+    Close();
 }
 
 void Writer::SetCacheSize(size_t size) {
@@ -51,12 +52,12 @@ void Writer::SetCacheSize(size_t size) {
 }
 
 void Writer::SetSampleRate(size_t rate) {
-    m_SampleRate = rate;
+    m_SampleFormat.SampleRate = rate;
     return;
 }
 
 void Writer::SetNumChannels(size_t ch) {
-    m_NumChannels = ch;
+    m_SampleFormat.NumChannels = ch;
     return;
 }
 
@@ -65,11 +66,11 @@ size_t Writer::GetCacheSize(void) const {
 }
 
 size_t Writer::GetSampleRate(void) const {
-    return m_SampleRate;
+    return m_SampleFormat.SampleRate;
 }
 
 size_t Writer::GetNumChannels(void) const {
-    return m_NumChannels;
+    return m_SampleFormat.NumChannels;
 }
 
 int Writer::GetDeviceCount(void) const {
@@ -93,15 +94,10 @@ double Writer::GetTime(void) const {
 bool Writer::Open(const char *name) {
     int id = m_DeviceMap[name] - 1;
     if(id < 0) return false;
-    SampleFormat sfmt;
-    sfmt.SampleRate  = m_SampleRate;
-    sfmt.NumChannels = m_NumChannels;
-    sfmt.FormatId    = BF_F32;
-    Callback func    = bind(&Writer::Main, this, _1, _2, _3);
-    m_WritePos       = 0;
+    SampleFormat &sfmt = m_SampleFormat;
+    Callback      func = bind(&Writer::Main, this, _1, _2, _3);
+    m_WritePos         = 0;
     if(!PortAudioWrapper::Open(id, sfmt, func)) return false;
-    m_SampleRate  = sfmt.SampleRate;
-    m_NumChannels = sfmt.NumChannels;
     PortAudioWrapper::Start();
     return true;
 }
@@ -139,7 +135,7 @@ size_t Writer::Tell(void) {
 
 void Writer::Main(const void *, void *output, size_t count) {
     m_Mutex.lock();
-    size_t num = count * m_NumChannels;
+    size_t num = count * m_SampleFormat.NumChannels;
     for(size_t i = 0; i < num; i++) {
         if(m_Buffer.empty()) break;
         ((float *)output)[i] = m_Buffer.front();

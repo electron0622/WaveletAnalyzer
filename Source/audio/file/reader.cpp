@@ -31,7 +31,7 @@ namespace File {
 
 using std::bind;
 
-Reader::Reader() : m_SampleFormat({0, 0, BF_VOID}),
+Reader::Reader() : m_SampleFormat({0, 0, BF_UNKNOWN}),
         m_MaxBufNum(0x4000), m_ReadPos(0), m_EndFlag(false) {
 }
 
@@ -77,6 +77,9 @@ void Reader::Close(void) {
     m_EndFlag = true;
     m_Thread.join();
     FFmpegWrapper::Close();
+    queue<float> tmp;
+    m_Buffer.swap(tmp);
+    m_ReadPos = 0;
     return;
 }
 
@@ -105,7 +108,11 @@ bool Reader::Seek(size_t offset) {
     m_Mutex.lock();
     auto successed = FFmpegWrapper::Seek(offset);
     m_Mutex.unlock();
-    if(successed) m_ReadPos = offset;
+    if(successed) {
+        queue<float> tmp;
+        m_Buffer.swap(tmp);
+        m_ReadPos = offset;
+    }
     return successed;
 }
 

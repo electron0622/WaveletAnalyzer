@@ -28,7 +28,6 @@
 #include <wx/choicdlg.h>
 #include "aboutdialog.hpp"
 #include "mainframe.hpp"
-#include "audiodecoder.hpp"
 
 namespace WaveletAnalyzer {
 

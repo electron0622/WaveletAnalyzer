@@ -33,8 +33,8 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using std::placeholders::_3;
 
-Reader::Reader() : m_MaxBufNum(0x4000), m_ReadPos(0),
-        m_SampleRate(0), m_NumChannels(0) {
+Reader::Reader() : m_SampleFormat({0, 0, BF_F32}),
+        m_MaxBufNum(0x4000), m_ReadPos(0) {
     int num = PortAudioWrapper::GetDeviceCount();
     for(int i = 0; i < num; i++) if(PortAudioWrapper::IsInputDevice(i)){
         m_DeviceMap[PortAudioWrapper::GetDeviceName(i)] = i + 1;
@@ -43,6 +43,7 @@ Reader::Reader() : m_MaxBufNum(0x4000), m_ReadPos(0),
 }
 
 Reader::~Reader() {
+    Close();
 }
 
 void Reader::SetCacheSize(size_t size) {
@@ -51,12 +52,12 @@ void Reader::SetCacheSize(size_t size) {
 }
 
 void Reader::SetSampleRate(size_t rate) {
-    m_SampleRate = rate;
+    m_SampleFormat.SampleRate = rate;
     return;
 }
 
 void Reader::SetNumChannels(size_t ch) {
-    m_NumChannels = ch;
+    m_SampleFormat.NumChannels = ch;
     return;
 }
 
@@ -65,11 +66,11 @@ size_t Reader::GetCacheSize(void) const {
 }
 
 size_t Reader::GetSampleRate(void) const {
-    return m_SampleRate;
+    return m_SampleFormat.SampleRate;
 }
 
 size_t Reader::GetNumChannels(void) const {
-    return m_NumChannels;
+    return m_SampleFormat.NumChannels;
 }
 
 int Reader::GetDeviceCount(void) const {
@@ -93,15 +94,10 @@ double Reader::GetTime(void) const {
 bool Reader::Open(const char *name) {
     int id = m_DeviceMap[name] - 1;
     if(id < 0) return false;
-    SampleFormat sfmt;
-    sfmt.SampleRate  = m_SampleRate;
-    sfmt.NumChannels = m_NumChannels;
-    sfmt.FormatId    = BF_F32;
-    Callback func    = bind(&Reader::Main, this, _1, _2, _3);
-    m_ReadPos        = 0;
+    SampleFormat &sfmt = m_SampleFormat;
+    Callback      func = bind(&Reader::Main, this, _1, _2, _3);
+    m_ReadPos          = 0;
     if(!PortAudioWrapper::Open(id, sfmt, func)) return false;
-    m_SampleRate  = sfmt.SampleRate;
-    m_NumChannels = sfmt.NumChannels;
     PortAudioWrapper::Start();
     return true;
 }
@@ -141,7 +137,7 @@ size_t Reader::Tell(void) {
 
 void Reader::Main(const void *input, void *, size_t count) {
     m_Mutex.lock();
-    size_t num = count * m_NumChannels;
+    size_t num = count * m_SampleFormat.NumChannels;
     for(size_t i = 0; i < num; i++) {
         if(m_Buffer.size() >= m_MaxBufNum) {
             m_Buffer.pop();

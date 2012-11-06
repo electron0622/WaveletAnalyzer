@@ -91,7 +91,7 @@ bool FFmpegWrapper::Open(const char *name, SampleFormat &sfmt) {
     case AV_SAMPLE_FMT_S32: sfmt.FormatId = BF_S32;  break;
     case AV_SAMPLE_FMT_FLT: sfmt.FormatId = BF_F32;  break;
     case AV_SAMPLE_FMT_DBL: sfmt.FormatId = BF_F64;  break;
-    default:                sfmt.FormatId = BF_VOID; break;
+    default:                sfmt.FormatId = BF_UNKNOWN; break;
     }
     return true;
 }
