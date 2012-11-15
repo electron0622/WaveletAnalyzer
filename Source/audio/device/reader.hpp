@@ -25,8 +25,8 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <mutex>
 #include <queue>
+#include <mutex>
 #include "portaudiowrapper.hpp"
 #include "../../util/io.hpp"
 
@@ -39,8 +39,8 @@ namespace Device {
 using std::string;
 using std::map;
 using std::vector;
-using std::mutex;
 using std::queue;
+using std::mutex;
 
 class Reader : protected PortAudioWrapper, public Util::IO {
 
@@ -76,8 +76,8 @@ private:
 private:
     map<string, int> m_DeviceMap;
     vector<int>      m_DeviceTable;
-    mutex            m_Mutex;
     queue<float>     m_Buffer;
+    mutex            m_Mutex;
     SampleFormat     m_SampleFormat;
     size_t           m_MaxBufNum;
     size_t           m_ReadPos;

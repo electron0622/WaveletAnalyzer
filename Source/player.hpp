@@ -22,12 +22,16 @@
 #ifndef _PLAYER_HPP_
 #define _PLAYER_HPP_
 
+#include <memory>
 #include <thread>
 #include "util/io.hpp"
 
 namespace WaveletAnalyzer {
 
+using std::shared_ptr;
 using std::thread;
+
+typedef shared_ptr<Util::IO> io_ptr;
 
 class Player {
 
@@ -36,27 +40,27 @@ public:
     ~Player();
 
 public:
-    bool Init(Util::IO *pReader, Util::IO *pWriter);
+    bool Init(io_ptr &pInput, io_ptr &pOutput);
 
 public:
     void Play(void);
     void Pause(void);
-    void Record(void);
     void Stop(void);
+
+public:
+    const char *GetMainGraph(size_t width, size_t height);
+    const char *GetSubGraph(size_t width, size_t height);
 
 private:
     void Main(void);
-    void Update(void);
-    void Reset(void);
 
 private:
-    Util::IO *m_pReader;
-    Util::IO *m_pWriter;
-    thread   *m_pThread;
-    bool      m_PlayFlag;
-    bool      m_RecordFlag;
-    bool      m_StopFlag;
-    bool      m_EndFlag;
+    io_ptr  m_pInput;
+    io_ptr  m_pOutput;
+    thread *m_pThread;
+    bool    m_PlayFlag;
+    bool    m_StopFlag;
+    bool    m_EndFlag;
 
 };
 

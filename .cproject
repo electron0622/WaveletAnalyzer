@@ -35,8 +35,6 @@
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="_DEBUG"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.debugging.gprof.133037769" name="gprof 情報の生成 (-pg)" superClass="gnu.cpp.compiler.option.debugging.gprof" value="false" valueType="boolean"/>
-								<option id="gnu.cpp.compiler.option.debugging.prof.237394485" name="prof 情報の生成 (-p)" superClass="gnu.cpp.compiler.option.debugging.prof" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.431129465" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug.304726577" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug">
@@ -51,8 +49,6 @@
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="_DEBUG"/>
 								</option>
-								<option id="gnu.c.compiler.option.debugging.gprof.278815498" name="gprof 情報の生成 (-pg)" superClass="gnu.c.compiler.option.debugging.gprof" value="false" valueType="boolean"/>
-								<option id="gnu.c.compiler.option.debugging.prof.603598189" name="prof 情報の生成 (-p)" superClass="gnu.c.compiler.option.debugging.prof" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1073229519" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.1814320741" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
@@ -90,8 +86,6 @@
 									<listOptionValue builtIn="false" value="C:\ffmpeg\lib"/>
 									<listOptionValue builtIn="false" value="C:\portaudio\lib"/>
 								</option>
-								<option id="gnu.cpp.link.option.debugging.prof.1410836828" name="prof 情報の生成 (-p)" superClass="gnu.cpp.link.option.debugging.prof" value="false" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.debugging.gprof.726035032" name="gprof 情報の生成 (-pg)" superClass="gnu.cpp.link.option.debugging.gprof" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.469752811" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

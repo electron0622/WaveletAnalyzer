@@ -35,6 +35,7 @@ public:
 
 private:
     void OnWindowClose(wxCloseEvent &event);
+    void OnWindowIdle(wxIdleEvent &event);
 
 private:
     void OnMenuOpen(wxCommandEvent &event);
@@ -46,11 +47,21 @@ private:
     void OnMenuAbout(wxCommandEvent &event);
 
 private:
-    bool OpenStream(const char *name, bool mode);
+    void OnPlayButtonClick(wxCommandEvent &event);
+    void OnStopButtonClick(wxCommandEvent &event);
+
+private:
+    void OpenErrorDialog(void);
+
+private:
+    bool OpenStream(io_ptr &pReader, io_ptr &pWriter);
     bool CloseStream(void);
 
 private:
-    Player *m_Player;
+    void WaitForNextFrame(size_t freq);
+
+private:
+    Player *m_pPlayer;
 
 };
 

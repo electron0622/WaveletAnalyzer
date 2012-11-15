@@ -21,12 +21,12 @@
 #include <wx/settings.h>
 #include <wx/panel.h>
 #include <wx/statline.h>
+#include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/statusbr.h>
 #include <wx/frame.h>
 #include <wx/notebook.h>
 #include <wx/stattext.h>
-#include <wx/button.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -42,24 +42,29 @@ namespace WaveletAnalyzer
 		private:
 		
 		protected:
-			wxMenuBar* mMenubar;
-			wxMenu* mMenuFile;
-			wxMenu* mMenuSettings;
-			wxMenu* mMenuHelp;
-			wxPanel* mPanelMain;
-			wxStaticLine* mStaticline1;
-			wxPanel* mPanelSub;
-			wxStaticLine* mStaticline2;
-			wxPanel* mPanelSettings;
-			wxStatusBar* mStatusBar;
+			wxMenuBar* m_Menubar;
+			wxMenu* m_MenuFile;
+			wxMenu* m_MenuSettings;
+			wxMenu* m_MenuHelp;
+			wxPanel* m_PanelMain;
+			wxStaticLine* m_Staticline1;
+			wxPanel* m_PanelSub;
+			wxStaticLine* m_Staticline2;
+			wxPanel* m_PanelSettings;
+			wxButton* m_ButtonPlay;
+			wxButton* m_ButtonStop;
+			wxStatusBar* m_StatusBar;
 			
 			// Virtual event handlers, overide them in your derived class
 			virtual void OnWindowClose( wxCloseEvent& event ) { event.Skip(); }
+			virtual void OnWindowIdle( wxIdleEvent& event ) { event.Skip(); }
 			virtual void OnMenuOpen( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnMenuDevice( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnMenuClose( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnMenuExit( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnMenuAbout( wxCommandEvent& event ) { event.Skip(); }
+			virtual void OnPlayButtonClick( wxCommandEvent& event ) { event.Skip(); }
+			virtual void OnStopButtonClick( wxCommandEvent& event ) { event.Skip(); }
 			
 		
 		public:
@@ -78,9 +83,9 @@ namespace WaveletAnalyzer
 		private:
 		
 		protected:
-			wxNotebook* mNotebookSettings;
-			wxPanel* mPanel1;
-			wxPanel* mPanel2;
+			wxNotebook* m_NotebookSettings;
+			wxPanel* m_Panel1;
+			wxPanel* m_Panel2;
 		
 		public:
 			
@@ -98,16 +103,16 @@ namespace WaveletAnalyzer
 		private:
 		
 		protected:
-			wxPanel* mPanelAbout;
-			wxStaticText* mStaticTextTitle;
-			wxStaticText* mStaticTextVersion;
-			wxStaticText* mStaticTextSpace1;
-			wxStaticText* mStaticTextDescription;
-			wxStaticText* mStaticTextSpace2;
-			wxStaticText* mStaticTextDevelopedBy;
-			wxStaticText* mStaticTextDeveloper1;
-			wxStaticText* mStaticTextSpace3;
-			wxButton* mButtonOK;
+			wxPanel* m_PanelAbout;
+			wxStaticText* m_StaticTextTitle;
+			wxStaticText* m_StaticTextVersion;
+			wxStaticText* m_StaticTextSpace1;
+			wxStaticText* m_StaticTextDescription;
+			wxStaticText* m_StaticTextSpace2;
+			wxStaticText* m_StaticTextDevelopedBy;
+			wxStaticText* m_StaticTextDeveloper1;
+			wxStaticText* m_StaticTextSpace3;
+			wxButton* m_ButtonOK;
 			
 			// Virtual event handlers, overide them in your derived class
 			virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }

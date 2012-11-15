@@ -105,8 +105,7 @@ bool Reader::Open(const char *name) {
 void Reader::Close(void) {
     PortAudioWrapper::Stop();
     PortAudioWrapper::Close();
-    queue<float> tmp;
-    m_Buffer.swap(tmp);
+    queue<float>().swap(m_Buffer);
     m_ReadPos = 0;
     return;
 }

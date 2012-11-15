@@ -22,13 +22,13 @@
 #ifndef _AUDIO_FILE_FFMPEGWRAPPER_HPP_
 #define _AUDIO_FILE_FFMPEGWRAPPER_HPP_
 
-#define __STDC_CONSTANT_MACROS
-extern "C" {
-#include <libavformat/avformat.h>
-#include <libavcodec/avcodec.h>
-}
 #include <mutex>
 #include "../format.hpp"
+
+struct AVFormatContext;
+struct AVCodecContext;
+struct AVPacket;
+struct AVFrame;
 
 namespace WaveletAnalyzer {
 

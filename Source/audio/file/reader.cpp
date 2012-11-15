@@ -67,6 +67,7 @@ size_t Reader::GetNumChannels(void) const {
 }
 
 bool Reader::Open(const char *name) {
+    if(m_Thread.joinable()) return false;
     if(!FFmpegWrapper::Open(name, m_SampleFormat)) return false;
     m_EndFlag = false;
     m_Thread  = thread(bind(&Reader::Main, this));
@@ -74,12 +75,13 @@ bool Reader::Open(const char *name) {
 }
 
 void Reader::Close(void) {
-    m_EndFlag = true;
-    m_Thread.join();
-    FFmpegWrapper::Close();
-    queue<float> tmp;
-    m_Buffer.swap(tmp);
-    m_ReadPos = 0;
+    if(m_Thread.joinable()) {
+        m_EndFlag = true;
+        m_Thread.join();
+        FFmpegWrapper::Close();
+        queue<float>().swap(m_Buffer);
+        m_ReadPos = 0;
+    }
     return;
 }
 
@@ -104,15 +106,26 @@ size_t Reader::Read(void *data, size_t size) {
 }
 
 bool Reader::Seek(size_t offset) {
-    if(offset != 0) return false;
-    m_Mutex.lock();
-    auto successed = FFmpegWrapper::Seek(offset);
-    m_Mutex.unlock();
-    if(successed) {
-        queue<float> tmp;
-        m_Buffer.swap(tmp);
-        m_ReadPos = offset;
+    offset /= sizeof(float);
+    size_t scale;
+    switch(m_SampleFormat.FormatId) {
+    case BF_S8:  scale = sizeof(int8_t);   break;
+    case BF_U8:  scale = sizeof(uint8_t);  break;
+    case BF_S16: scale = sizeof(int16_t);  break;
+    case BF_U16: scale = sizeof(uint16_t); break;
+    case BF_S32: scale = sizeof(int32_t);  break;
+    case BF_U32: scale = sizeof(uint32_t); break;
+    case BF_F32: scale = sizeof(float);    break;
+    case BF_F64: scale = sizeof(double);   break;
+    default:     scale = 0;                break;
     }
+    m_Mutex.lock();
+    auto successed = FFmpegWrapper::Seek(offset * scale);
+    if(successed) {
+        queue<float>().swap(m_Buffer);
+        m_ReadPos = offset * sizeof(float);
+    }
+    m_Mutex.unlock();
     return successed;
 }
 

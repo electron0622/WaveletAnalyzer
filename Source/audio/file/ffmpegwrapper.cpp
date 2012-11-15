@@ -19,6 +19,11 @@
 //
 //============================================================================
 
+#define __STDC_CONSTANT_MACROS
+extern "C" {
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+}
 #include <queue>
 #include "ffmpegwrapper.hpp"
 
@@ -86,11 +91,11 @@ bool FFmpegWrapper::Open(const char *name, SampleFormat &sfmt) {
     sfmt.SampleRate  = pcc->sample_rate;
     sfmt.NumChannels = pcc->channels;
     switch(pcc->sample_fmt) {
-    case AV_SAMPLE_FMT_U8:  sfmt.FormatId = BF_U8;   break;
-    case AV_SAMPLE_FMT_S16: sfmt.FormatId = BF_S16;  break;
-    case AV_SAMPLE_FMT_S32: sfmt.FormatId = BF_S32;  break;
-    case AV_SAMPLE_FMT_FLT: sfmt.FormatId = BF_F32;  break;
-    case AV_SAMPLE_FMT_DBL: sfmt.FormatId = BF_F64;  break;
+    case AV_SAMPLE_FMT_U8:  sfmt.FormatId = BF_U8;      break;
+    case AV_SAMPLE_FMT_S16: sfmt.FormatId = BF_S16;     break;
+    case AV_SAMPLE_FMT_S32: sfmt.FormatId = BF_S32;     break;
+    case AV_SAMPLE_FMT_FLT: sfmt.FormatId = BF_F32;     break;
+    case AV_SAMPLE_FMT_DBL: sfmt.FormatId = BF_F64;     break;
     default:                sfmt.FormatId = BF_UNKNOWN; break;
     }
     return true;
@@ -150,6 +155,7 @@ size_t FFmpegWrapper::Decode(T *data, size_t size) {
                 for(int i = 0; i < num; i++) buf.push(ptr[i]);
             }
         }
+        av_free_packet(ppacket);
     }
     {
         T *ptr = (T *)data;

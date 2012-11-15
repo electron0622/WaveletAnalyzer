@@ -22,9 +22,9 @@
 #ifndef _AUDIO_FILE_READER_HPP_
 #define _AUDIO_FILE_READER_HPP_
 
+#include <queue>
 #include <thread>
 #include <mutex>
-#include <queue>
 #include "ffmpegwrapper.hpp"
 #include "../../util/io.hpp"
 
@@ -34,9 +34,9 @@ namespace Audio {
 
 namespace File {
 
+using std::queue;
 using std::thread;
 using std::mutex;
-using std::queue;
 
 class Reader : protected FFmpegWrapper, public Util::IO {
 
@@ -69,9 +69,9 @@ private:
     void FillBuffer(T bias, float scale);
 
 private:
+    queue<float> m_Buffer;
     thread       m_Thread;
     mutex        m_Mutex;
-    queue<float> m_Buffer;
     SampleFormat m_SampleFormat;
     size_t       m_MaxBufNum;
     size_t       m_ReadPos;
