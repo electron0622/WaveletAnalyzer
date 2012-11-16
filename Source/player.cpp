@@ -28,8 +28,8 @@ namespace WaveletAnalyzer {
 
 using std::bind;
 
-Player::Player() : m_pThread(nullptr), m_PlayFlag(false),
-        m_StopFlag(false), m_EndFlag(false) {
+Player::Player() : m_pThread(nullptr), m_Volume(1.0f),
+        m_PlayFlag(false), m_StopFlag(false), m_EndFlag(false) {
 }
 
 Player::~Player() {
@@ -48,6 +48,20 @@ bool Player::Init(io_ptr &pInput, io_ptr &pOutput) {
     return true;
 }
 
+const char *Player::GetMainGraph(size_t width, size_t height) {
+    return nullptr;
+}
+
+const char *Player::GetSubGraph(size_t width, size_t height) {
+    return nullptr;
+}
+
+bool Player::SetVolume(float vol) {
+    if(vol < 0.0f) return false;
+    m_Volume = vol;
+    return true;
+}
+
 void Player::Play(void) {
     m_PlayFlag = true;
     return;
@@ -63,17 +77,10 @@ void Player::Stop(void) {
     return;
 }
 
-const char *Player::GetMainGraph(size_t width, size_t height) {
-    return nullptr;
-}
-
-const char *Player::GetSubGraph(size_t width, size_t height) {
-    return nullptr;
-}
-
 void Player::Main(void) {
-    constexpr size_t size = 0x1000;
-    float data[size / sizeof(float)];
+    constexpr size_t num  = 0x100;
+    constexpr size_t size = num * sizeof(float);
+    float data[num];
     while(!m_EndFlag) {
         if(m_StopFlag) {
             m_pInput->Seek(0);
@@ -86,6 +93,8 @@ void Player::Main(void) {
         if(m_PlayFlag) {
             if(m_pInput->Read(nullptr, 0) <= size) continue;
             m_pInput->Read(data, size);
+            auto vol = m_Volume;
+            for(size_t i = 0; i < num; i++) data[i] *= vol;
         } else {
             memset(data, 0, size);
         }

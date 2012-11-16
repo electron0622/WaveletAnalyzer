@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  player.hpp
+//  wavelet.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,55 +19,36 @@
 //
 //============================================================================
 
-#ifndef _PLAYER_HPP_
-#define _PLAYER_HPP_
+#ifndef _WAVELET_HPP_
+#define _WAVELET_HPP_
 
-#include <memory>
-#include <thread>
-#include "util/io.hpp"
+#include <complex>
+#include <functional>
 
 namespace WaveletAnalyzer {
 
-using std::shared_ptr;
-using std::thread;
+using std::complex;
+using std::function;
 
-typedef shared_ptr<Util::IO> io_ptr;
+typedef function<complex<float> (float)> WaveletFunc;
 
-class Player {
-
-public:
-    Player();
-    ~Player();
+class Wavelet {
 
 public:
-    bool Init(io_ptr &pInput, io_ptr &pOutput);
+    Wavelet();
+    ~Wavelet();
 
 public:
-    const char *GetMainGraph(size_t width, size_t height);
-    const char *GetSubGraph(size_t width, size_t height);
+    bool Init(WaveletFunc &func, size_t nx, size_t ny, float hf, float lf);
 
 public:
-    bool SetVolume(float vol);
-
-public:
-    void Play(void);
-    void Pause(void);
-    void Stop(void);
+    bool Exec(complex<float> *dst, float *src);
 
 private:
-    void Main(void);
-
-private:
-    io_ptr  m_pInput;
-    io_ptr  m_pOutput;
-    thread *m_pThread;
-    float   m_Volume;
-    bool    m_PlayFlag;
-    bool    m_StopFlag;
-    bool    m_EndFlag;
+    WaveletFunc m_Function;
 
 };
 
 }  // namespace WaveletAnalyzer
 
-#endif /* _PLAYER_HPP_ */
+#endif /* _WAVELET_HPP_ */
