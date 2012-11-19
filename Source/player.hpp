@@ -24,6 +24,7 @@
 
 #include <memory>
 #include <thread>
+#include "wavelet.hpp"
 #include "util/io.hpp"
 
 namespace WaveletAnalyzer {

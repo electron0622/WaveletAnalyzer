@@ -76,6 +76,8 @@ void MainFrame::OnMenuOpen(wxCommandEvent &event) {
     auto pWriter = new Audio::Device::Writer;
     auto pInput  = io_ptr(pReader);
     auto pOutput = io_ptr(pWriter);
+    pReader->SetCacheSize(0x10000);
+    pWriter->SetCacheSize(0x10000);
     if(!pReader->Open((const char *)name.GetData())) {
         OpenErrorDialog();
         return;

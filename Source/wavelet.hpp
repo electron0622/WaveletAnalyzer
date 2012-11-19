@@ -22,6 +22,7 @@
 #ifndef _WAVELET_HPP_
 #define _WAVELET_HPP_
 
+#include <fftw3.h>
 #include <complex>
 #include <functional>
 
@@ -30,7 +31,8 @@ namespace WaveletAnalyzer {
 using std::complex;
 using std::function;
 
-typedef function<complex<float> (float)> WaveletFunc;
+typedef function<complex<float> (float)>      MotherWaveletFunc;
+typedef function<float (float, float, float)> InterpolationFunc;
 
 class Wavelet {
 
@@ -39,13 +41,24 @@ public:
     ~Wavelet();
 
 public:
-    bool Init(WaveletFunc &func, size_t nx, size_t ny, float hf, float lf);
+    bool Init(float tmin, float tmax, size_t tnum,
+              float fmin, float fmax, size_t fnum,
+              MotherWaveletFunc &MotherWavelet,
+              InterpolationFunc &Interpolation);
 
 public:
-    bool Exec(complex<float> *dst, float *src);
+    bool Exec(float *dst, const float *src);
 
 private:
-    WaveletFunc m_Function;
+    fftwf_plan      m_PlanFFT;
+    fftwf_plan      m_PlanIFFT;
+    complex<float> *m_pTable;
+    float          *m_pTemp0;
+    complex<float> *m_pTemp1;
+    complex<float> *m_pTemp2;
+    complex<float> *m_pTemp3;
+    size_t          m_TimeNum;
+    size_t          m_FreqNum;
 
 };
 
