@@ -82,7 +82,7 @@ void Player::Main(void) {
     constexpr size_t size = num * sizeof(float);
     float data[num];
     Wavelet w;
-    float *dst = new float[num * 1024];
+    float *dst = new float[num * 512];
     MotherWaveletFunc mfunc = [](float x) {
         constexpr float one_over_sqrt_two_pi = 1.0 / std::sqrt(2.0 * M_PI);
         return one_over_sqrt_two_pi * std::exp(complex<float>(x * x * (-1.0f / 2.0f), (float)(2.0f * M_PI) * x));
@@ -90,7 +90,7 @@ void Player::Main(void) {
     InterpolationFunc ifunc = [](float min, float max, float alpha) {
         return min * (1 - alpha) + max * alpha;
     };
-    w.Init(0.0f, num/44100.0f, num, 20.0f, 20000.0f, 1024, mfunc, ifunc);
+    w.Init(0.0f, num/44100.0f, num, 20.0f, 20000.0f, 512, mfunc, ifunc);
     while(!m_EndFlag) {
         if(m_StopFlag) {
             m_pInput->Seek(0);

@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  wavelet.hpp
+//  line.cpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,48 +19,25 @@
 //
 //============================================================================
 
-#ifndef _WAVELET_HPP_
-#define _WAVELET_HPP_
-
-#include <fftw3.h>
-#include <complex>
-#include <functional>
+#include "line.hpp"
 
 namespace WaveletAnalyzer {
 
-using std::complex;
-using std::function;
+namespace Plot {
 
-typedef function<complex<float> (float)>      MotherWaveletFunc;
-typedef function<float (float, float, float)> InterpolationFunc;
+Line::Line() {
+    auto pls = new plstream;
+    pls->sdev("mem");
+    pls->init();
+    pls->smem(0, 0, nullptr);
+    m_pStream = pls;
+}
 
-class Wavelet {
+Line::~Line() {
+    delete m_pStream;
+}
 
-public:
-    Wavelet();
-    ~Wavelet();
-
-public:
-    bool Init(float tmin, float tmax, size_t tnum,
-              float fmin, float fmax, size_t fnum,
-              MotherWaveletFunc &MotherWavelet,
-              InterpolationFunc &Interpolation);
-
-public:
-    bool Exec(float *dst, const float *src);
-
-private:
-    fftwf_plan     *m_pPlan;
-    complex<float> *m_pTable;
-    float          *m_pTemp0;
-    complex<float> *m_pTemp1;
-    complex<float> *m_pTemp2;
-    complex<float> *m_pTemp3;
-    size_t          m_TimeNum;
-    size_t          m_FreqNum;
-
-};
+}  // namespace Plot
 
 }  // namespace WaveletAnalyzer
 
-#endif /* _WAVELET_HPP_ */

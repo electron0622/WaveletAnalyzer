@@ -30,8 +30,9 @@
 									<listOptionValue builtIn="false" value="C:\ffmpeg\include"/>
 									<listOptionValue builtIn="false" value="C:\portaudio\include"/>
 									<listOptionValue builtIn="false" value="C:\fftw-3.3.2\include"/>
+									<listOptionValue builtIn="false" value="C:\plplot\include"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.1294738093" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11 -std=gnu++11" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1294738093" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11 -std=gnu++11 -fopenmp" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1443999669" name="定義済みのシンボル (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="_DEBUG"/>
@@ -45,8 +46,9 @@
 									<listOptionValue builtIn="false" value="C:\ffmpeg\include"/>
 									<listOptionValue builtIn="false" value="C:\portaudio\include"/>
 									<listOptionValue builtIn="false" value="C:\fftw-3.3.2\include"/>
+									<listOptionValue builtIn="false" value="C:\plplot\include"/>
 								</option>
-								<option id="gnu.c.compiler.option.misc.other.521650980" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.521650980" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fopenmp" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1980536878" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="_DEBUG"/>
@@ -83,12 +85,13 @@
 									<listOptionValue builtIn="false" value="stdthread"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.1353688760" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.1353688760" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="-fopenmp" valueType="string"/>
 								<option id="gnu.cpp.link.option.paths.1084650427" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="C:\wxWidgets-2.8.12\msw-ansi-debug-static-2.8\lib"/>
 									<listOptionValue builtIn="false" value="C:\ffmpeg\lib"/>
 									<listOptionValue builtIn="false" value="C:\portaudio\lib"/>
 									<listOptionValue builtIn="false" value="C:\fftw-3.3.2\lib"/>
+									<listOptionValue builtIn="false" value="C:\plplot\lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.469752811" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -130,8 +133,9 @@
 									<listOptionValue builtIn="false" value="C:\ffmpeg\include"/>
 									<listOptionValue builtIn="false" value="C:\portaudio\include"/>
 									<listOptionValue builtIn="false" value="C:\fftw-3.3.2\include"/>
+									<listOptionValue builtIn="false" value="C:\plplot\include"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.513772794" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11 -std=gnu++11" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.513772794" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11 -std=gnu++11 -fopenmp" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1685768047" name="定義済みのシンボル (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.377756403" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -142,17 +146,17 @@
 									<listOptionValue builtIn="false" value="C:\ffmpeg\include"/>
 									<listOptionValue builtIn="false" value="C:\portaudio\include"/>
 									<listOptionValue builtIn="false" value="C:\fftw-3.3.2\include"/>
+									<listOptionValue builtIn="false" value="C:\plplot\include"/>
 								</option>
-								<option id="gnu.c.compiler.option.misc.other.762628813" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.762628813" name="その他のフラグ" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fopenmp" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.729860920" name="定義済みのシンボル (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.802355890" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.468055382" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release.1353199759" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release">
 								<option id="gnu.cpp.link.option.libs.1022338274" name="ライブラリー (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="fftw3f_omp"/>
 									<listOptionValue builtIn="false" value="fftw3f"/>
-									<listOptionValue builtIn="false" value="portaudio.dll"/>
+									<listOptionValue builtIn="false" value="portaudio"/>
 									<listOptionValue builtIn="false" value="avformat"/>
 									<listOptionValue builtIn="false" value="avcodec"/>
 									<listOptionValue builtIn="false" value="avutil"/>
@@ -184,6 +188,7 @@
 									<listOptionValue builtIn="false" value="C:\ffmpeg\lib"/>
 									<listOptionValue builtIn="false" value="C:\portaudio\lib"/>
 									<listOptionValue builtIn="false" value="C:\fftw-3.3.2\lib"/>
+									<listOptionValue builtIn="false" value="C:\plplot\lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.8064891" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
