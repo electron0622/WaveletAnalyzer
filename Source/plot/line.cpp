@@ -19,25 +19,52 @@
 //
 //============================================================================
 
+#include <plplot/plstream.h>
 #include "line.hpp"
 
 namespace WaveletAnalyzer {
 
 namespace Plot {
 
-Line::Line() {
-    auto pls = new plstream;
-    pls->sdev("mem");
-    pls->init();
-    pls->smem(0, 0, nullptr);
-    m_pStream = pls;
+Line::Line() : m_pData(nullptr), m_Width(0), m_Height(0) {
 }
 
 Line::~Line() {
-    delete m_pStream;
+    free(m_pData);
+}
+
+bool Line::Init(size_t width, size_t height) {
+    free(m_pData);
+    m_pData = malloc(width * height * 8);
+    if(!m_pData) return false;
+    m_Width  = width;
+    m_Height = height;
+    return true;
+}
+
+size_t Line::GetWidth(void) const {
+    return m_Width;
+}
+
+size_t Line::GetHeight(void) const {
+    return m_Height;
+}
+
+const void *Line::GetData(void) const {
+    return m_pData;
+}
+
+void Line::Draw(size_t width, size_t height) {
+    plstream pls;
+    pls.sdev("mem");
+    pls.smem(m_Width, m_Height, m_pData);
+    pls.init();
+    pls.vpas(0.0, width, 0.0, height, 1.0);
+    pls.wind(-1.3, 1.3, -1.3, 1.3);
+    pls.box("a", 0, 0, "a", 0, 0);
+    return;
 }
 
 }  // namespace Plot
 
 }  // namespace WaveletAnalyzer
-

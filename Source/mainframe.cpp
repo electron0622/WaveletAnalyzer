@@ -31,6 +31,7 @@
 #include "audio/file/reader.hpp"
 #include "audio/device/reader.hpp"
 #include "audio/device/writer.hpp"
+#include "plot/line.hpp"
 
 namespace WaveletAnalyzer {
 
@@ -50,17 +51,22 @@ void MainFrame::OnWindowClose(wxCloseEvent &event) {
 }
 
 void MainFrame::OnWindowIdle(wxIdleEvent &event) {
+    static Plot::Line pl;
+    static auto once = false;
+    if(!once) { pl.Init(640, 480); once = true; };
     int w, h;
     wxClientDC MainDC(m_PanelMain), SubDC(m_PanelSub);
     m_PanelMain->GetClientSize(&w, &h);
     wxImage MainImage(w, h);
 //    MainImage.SetData(m_pPlayer->GetMainGraph(w, h));
     m_PanelSub->GetClientSize(&w, &h);
-    wxImage SubImage(w, h);
-//    SubImage.SetData(m_pPlayer->GetSubGlaph(w, h));
+    pl.Draw(w, h);
+    wxImage SubImage(pl.GetWidth(), pl.GetHeight(), (unsigned char *)const_cast<void *>(pl.GetData()), true);
     WaitForNextFrame(30);
-    MainDC.DrawBitmap(wxBitmap(MainImage), 0, 0);
-    SubDC.DrawBitmap(wxBitmap(SubImage), 0, 0);
+    wxBitmap MainBitmap(MainImage);
+    wxBitmap SubBitmap(SubImage);
+    MainDC.DrawBitmap(MainBitmap, 0, 0);
+    SubDC.DrawBitmap(SubBitmap, 0, 0);
     event.RequestMore(true);
     return;
 }

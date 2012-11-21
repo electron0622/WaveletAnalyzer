@@ -22,8 +22,6 @@
 #ifndef _PLOT_LINE_HPP_
 #define _PLOT_LINE_HPP_
 
-#include <plplot/plstream.h>
-
 namespace WaveletAnalyzer {
 
 namespace Plot {
@@ -34,8 +32,21 @@ public:
     Line();
     ~Line();
 
+public:
+    bool Init(size_t width, size_t height);
+
+public:
+    size_t GetWidth(void) const;
+    size_t GetHeight(void) const;
+    const void *GetData(void) const;
+
+public:
+    void Draw(size_t width, size_t height);
+
 private:
-    plstream *m_pStream;
+    void  *m_pData;
+    size_t m_Width;
+    size_t m_Height;
 
 };
 

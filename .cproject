@@ -58,8 +58,11 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.1814320741" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug.1407232471" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug">
 								<option id="gnu.cpp.link.option.libs.1572577764" name="ライブラリー (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="plplotcxx"/>
+									<listOptionValue builtIn="false" value="plplot"/>
+									<listOptionValue builtIn="false" value="qsastime"/>
 									<listOptionValue builtIn="false" value="fftw3f"/>
-									<listOptionValue builtIn="false" value="portaudio"/>
+									<listOptionValue builtIn="false" value="portaudio.dll"/>
 									<listOptionValue builtIn="false" value="avformat"/>
 									<listOptionValue builtIn="false" value="avcodec"/>
 									<listOptionValue builtIn="false" value="avutil"/>
@@ -155,8 +158,11 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.468055382" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release.1353199759" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release">
 								<option id="gnu.cpp.link.option.libs.1022338274" name="ライブラリー (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="plplotcxx"/>
+									<listOptionValue builtIn="false" value="plplot"/>
+									<listOptionValue builtIn="false" value="qsastime"/>
 									<listOptionValue builtIn="false" value="fftw3f"/>
-									<listOptionValue builtIn="false" value="portaudio"/>
+									<listOptionValue builtIn="false" value="portaudio.dll"/>
 									<listOptionValue builtIn="false" value="avformat"/>
 									<listOptionValue builtIn="false" value="avcodec"/>
 									<listOptionValue builtIn="false" value="avutil"/>
