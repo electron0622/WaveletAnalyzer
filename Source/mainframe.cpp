@@ -53,15 +53,20 @@ void MainFrame::OnWindowClose(wxCloseEvent &event) {
 void MainFrame::OnWindowIdle(wxIdleEvent &event) {
     static Plot::Line pl;
     static auto once = false;
-    if(!once) { pl.Init(640, 480); once = true; };
+    if(!once) { pl.Init(1920, 1080); once = true; };
     int w, h;
     wxClientDC MainDC(m_PanelMain), SubDC(m_PanelSub);
     m_PanelMain->GetClientSize(&w, &h);
-    wxImage MainImage(w, h);
-//    MainImage.SetData(m_pPlayer->GetMainGraph(w, h));
+    constexpr float sigma = 0.333f;
+    Plot::LineFunc mfunc = [](float x) {
+        constexpr float one_over_sqrt_two_pi = 1.0 / std::sqrt(2.0 * M_PI);
+        return (one_over_sqrt_two_pi / sigma) * std::exp(complex<float>(x * x * (-1.0f / (2.0f * sigma * sigma)), (float)(2.0f * M_PI) * x));
+    };
+    pl.SetRange(-3.0f * sigma, 3.0f * sigma, -1.5f, 1.5f);
+    pl.Draw(&mfunc, w, h);
+    wxImage MainImage(pl.GetWidth(), pl.GetHeight(), (unsigned char *)const_cast<void *>(pl.GetData()), true);
     m_PanelSub->GetClientSize(&w, &h);
-    pl.Draw(w, h);
-    wxImage SubImage(pl.GetWidth(), pl.GetHeight(), (unsigned char *)const_cast<void *>(pl.GetData()), true);
+    wxImage SubImage(w, h);
     WaitForNextFrame(30);
     wxBitmap MainBitmap(MainImage);
     wxBitmap SubBitmap(SubImage);

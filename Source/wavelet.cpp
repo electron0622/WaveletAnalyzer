@@ -90,15 +90,14 @@ bool Wavelet::Init(float tmin, float tmax, size_t tnum,
     for(size_t i = 0; i < fnum; i++) {
         constexpr auto mode = FFTW_FORWARD;
         constexpr auto flag = FFTW_ESTIMATE;
-        auto pos  = tnum * i;
-        auto tmp  = temp2 + pos;
-        auto src  = reinterpret_cast<fftwf_complex *>(tmp);
-        auto dst  = reinterpret_cast<fftwf_complex *>(table + pos);
-        auto plan = fftwf_plan_dft_1d(fnum, src, dst, mode, flag);
-        float xscale = base * Interpolation(fmin, fmax, i * step);
-        float yscale = 2.0f * xscale;
+        auto pos   = tnum * i;
+        auto tmp   = temp2 + pos;
+        auto src   = reinterpret_cast<fftwf_complex *>(tmp);
+        auto dst   = reinterpret_cast<fftwf_complex *>(table + pos);
+        auto plan  = fftwf_plan_dft_1d(fnum, src, dst, mode, flag);
+        auto scale = base * Interpolation(fmin, fmax, i * step);
         for(int j = -half; j < half; j++) {
-            tmp[j & mask] = yscale * MotherWavelet(j * xscale);
+            tmp[j & mask] = scale * MotherWavelet(j * scale);
         }
         fftwf_execute(plan);
         fftwf_destroy_plan(plan);

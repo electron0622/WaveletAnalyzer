@@ -19,24 +19,28 @@
 //
 //============================================================================
 
+#include <string.h>
 #include <plplot/plstream.h>
+#include <vector>
 #include "line.hpp"
 
 namespace WaveletAnalyzer {
 
 namespace Plot {
 
-Line::Line() : m_pData(nullptr), m_Width(0), m_Height(0) {
+using std::vector;
+
+Line::Line() : m_pData(nullptr), m_Width(0), m_Height(0),
+        m_MinX(-1.0f), m_MaxX(1.0f), m_MinY(-1.0f), m_MaxY(1.0f) {
 }
 
 Line::~Line() {
-    free(m_pData);
+    delete[] m_pData;
 }
 
 bool Line::Init(size_t width, size_t height) {
-    free(m_pData);
-    m_pData = malloc(width * height * 8);
-    if(!m_pData) return false;
+    delete[] m_pData;
+    m_pData  = new uint8_t[width * height * 3];
     m_Width  = width;
     m_Height = height;
     return true;
@@ -54,14 +58,60 @@ const void *Line::GetData(void) const {
     return m_pData;
 }
 
-void Line::Draw(size_t width, size_t height) {
+void Line::SetRange(float xmin, float xmax, float ymin, float ymax) {
+    m_MinX = xmin;
+    m_MaxX = xmax;
+    m_MinY = ymin;
+    m_MaxY = ymax;
+    return;
+}
+
+void Line::Draw(LineFunc *func, size_t width, size_t height) {
+    auto data = m_pData;
+    auto wmax = m_Width;
+    auto hmax = m_Height;
+    memset(data, 0, wmax * hmax * 3);
     plstream pls;
     pls.sdev("mem");
-    pls.smem(m_Width, m_Height, m_pData);
+    pls.smem(wmax, hmax, data);
     pls.init();
-    pls.vpas(0.0, width, 0.0, height, 1.0);
-    pls.wind(-1.3, 1.3, -1.3, 1.3);
-    pls.box("a", 0, 0, "a", 0, 0);
+    pls.adv(0);
+    pls.schr(2, 1.0f);
+    pls.col0(3);
+    auto xgap = 40.0f;
+    auto ygap = 30.0f;
+    auto xmin =                  xgap  / wmax;
+    auto xmax =        (width  - xgap) / wmax;
+    auto ymin = 1.0f - (height - ygap) / hmax;
+    auto ymax = 1.0f -           ygap  / hmax;
+    pls.vpor(xmin, xmax, ymin, ymax);
+    xmin = m_MinX;
+    xmax = m_MaxX;
+    ymin = m_MinY;
+    ymax = m_MaxY;
+    pls.wind(xmin, xmax, ymin, ymax);
+    pls.box("abcfgnt", 0.0f, 0, "abcfgntv", 0.0f, 0);
+    pls.lab("", "", "Mother Wavelet");
+    if(!func) return;
+    int num = width - 2.0f * xgap;
+    if(num < 2) return;
+    static vector<float> xr;
+    static vector<float> yr;
+    static vector<float> yi;
+    xr.resize(num);
+    yr.resize(num);
+    yi.resize(num);
+    for(int i = 0; i < num; i++) {
+        auto a = (float)i / (num - 1);
+        xr[i]  = xmin * (1.0f - a) + xmax * a;
+        auto y = (*func)(xr[i]);
+        yr[i]  = y.real();
+        yi[i]  = y.imag();
+    }
+    pls.col0(1);
+    pls.line(num, &xr[0], &yr[0]);
+    pls.col0(9);
+    pls.line(num, &xr[0], &yi[0]);
     return;
 }
 

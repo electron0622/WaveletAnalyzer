@@ -22,9 +22,18 @@
 #ifndef _PLOT_LINE_HPP_
 #define _PLOT_LINE_HPP_
 
+#include <stdint.h>
+#include <functional>
+#include <complex>
+
 namespace WaveletAnalyzer {
 
 namespace Plot {
+
+using std::function;
+using std::complex;
+
+typedef function<complex<float> (float)> LineFunc;
 
 class Line {
 
@@ -41,12 +50,19 @@ public:
     const void *GetData(void) const;
 
 public:
-    void Draw(size_t width, size_t height);
+    void SetRange(float xmin, float xmax, float ymin, float ymax);
+
+public:
+    void Draw(LineFunc *func, size_t width, size_t height);
 
 private:
-    void  *m_pData;
-    size_t m_Width;
-    size_t m_Height;
+    uint8_t *m_pData;
+    size_t   m_Width;
+    size_t   m_Height;
+    float    m_MinX;
+    float    m_MaxX;
+    float    m_MinY;
+    float    m_MaxY;
 
 };
 
