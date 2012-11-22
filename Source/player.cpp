@@ -21,14 +21,17 @@
 
 #include <unistd.h>
 #include <functional>
+#include <vector>
 #include "player.hpp"
 #include "util/io.hpp"
+#include "wavelet.hpp"
 
 namespace WaveletAnalyzer {
 
 using std::bind;
+using std::vector;
 
-Player::Player() : m_pThread(nullptr), m_Volume(1.0f),
+Player::Player() : m_pThread(nullptr), m_DataNum(0x100), m_Volume(1.0f),
         m_PlayFlag(false), m_StopFlag(false), m_EndFlag(false) {
 }
 
@@ -41,19 +44,23 @@ Player::~Player() {
 }
 
 bool Player::Init(io_ptr &pInput, io_ptr &pOutput) {
-    if(m_pThread || !pInput || !pOutput) return false;
-    m_pInput  = pInput;
-    m_pOutput = pOutput;
-    m_pThread = new thread(bind(&Player::Main, this));
+    auto pAnalyzer = io_ptr(new Util::IO);
+    return Init(pInput, pOutput, pAnalyzer);
+}
+
+bool Player::Init(io_ptr &pInput, io_ptr &pOutput, io_ptr &pAnalyzer) {
+    if(m_pThread || !pInput || !pOutput || !pAnalyzer) return false;
+    m_pInput    = pInput;
+    m_pOutput   = pOutput;
+    m_pAnalyzer = pAnalyzer;
+    m_pThread   = new thread(bind(&Player::Main, this));
     return true;
 }
 
-const char *Player::GetMainGraph(size_t width, size_t height) {
-    return nullptr;
-}
-
-const char *Player::GetSubGraph(size_t width, size_t height) {
-    return nullptr;
+bool Player::SetDataSize(size_t size) {
+    if(size < sizeof(float)) return false;
+    m_DataNum = size / sizeof(float);
+    return true;
 }
 
 bool Player::SetVolume(float vol) {
@@ -78,41 +85,37 @@ void Player::Stop(void) {
 }
 
 void Player::Main(void) {
-    constexpr size_t num  = 0x1000;
-    constexpr size_t size = num * sizeof(float);
-    float data[num];
-    Wavelet w;
-    float *dst = new float[num * 512];
-    MotherWaveletFunc mfunc = [](float x) {
-        constexpr float one_over_sqrt_two_pi = 1.0 / std::sqrt(2.0 * M_PI);
-        return one_over_sqrt_two_pi * std::exp(complex<float>(x * x * (-1.0f / 2.0f), (float)(2.0f * M_PI) * x));
-    };
-    InterpolationFunc ifunc = [](float min, float max, float alpha) {
-        return min * (1 - alpha) + max * alpha;
-    };
-    w.Init(0.0f, num/44100.0f, num, 20.0f, 20000.0f, 512, mfunc, ifunc);
+    vector<float> data(m_DataNum);
     while(!m_EndFlag) {
         if(m_StopFlag) {
             m_pInput->Seek(0);
             m_PlayFlag = false;
             m_StopFlag = false;
+        }
+        if(!m_PlayFlag) {
+            usleep(1);
             continue;
         }
-        usleep(1);
-        if(m_pOutput->Write(nullptr, 0) <= size) continue;
-        if(m_PlayFlag) {
-            if(m_pInput->Read(nullptr, 0) <= size) continue;
-            m_pInput->Read(data, size);
-            auto vol = m_Volume;
-            for(size_t i = 0; i < num; i++) data[i] *= vol;
-            w.Exec(dst, data);
-        } else {
-            memset(data, 0, size);
+        auto num  = m_DataNum;
+        auto size = num * sizeof(float);
+        if(m_pOutput->Write(nullptr, 0) <= size) {
+            usleep(1);
+            continue;
         }
-        m_pOutput->Write(data, size);
+        if(m_pInput ->Read (nullptr, 0) <= size) {
+            usleep(1);
+            continue;
+        }
+        data.resize(num);
+        m_pInput   ->Read (&data[0], size);
+        auto vol = m_Volume;
+        for(size_t i = 0; i < num; i++) data[i] *= vol;
+        m_pOutput  ->Write(&data[0], size);
+        m_pAnalyzer->Write(&data[0], size);
     }
-    m_pInput ->Close();
-    m_pOutput->Close();
+    m_pInput   ->Close();
+    m_pOutput  ->Close();
+    m_pAnalyzer->Close();
     return;
 }
 

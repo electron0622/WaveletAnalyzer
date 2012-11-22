@@ -133,8 +133,9 @@ size_t Writer::Tell(void) {
 }
 
 void Writer::Main(const void *, void *output, size_t count) {
-    m_Mutex.lock();
     size_t num = count * m_SampleFormat.NumChannels;
+    memset(output, 0, num * sizeof(float));
+    m_Mutex.lock();
     for(size_t i = 0; i < num; i++) {
         if(m_Buffer.empty()) break;
         ((float *)output)[i] = m_Buffer.front();

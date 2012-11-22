@@ -38,7 +38,7 @@ namespace WaveletAnalyzer {
 namespace chrono = std::chrono;
 
 MainFrame::MainFrame(wxWindow *parent) :
-        IMainFrame(parent), m_pPlayer(nullptr) {
+        IMainFrame(parent), m_pPlayer(nullptr), m_pAnalyzer(new Util::IO) {
 }
 
 MainFrame::~MainFrame() {
@@ -53,25 +53,23 @@ void MainFrame::OnWindowClose(wxCloseEvent &event) {
 void MainFrame::OnWindowIdle(wxIdleEvent &event) {
     static Plot::Line pl;
     static auto once = false;
-    if(!once) { pl.Init(1920, 1080); once = true; };
+    if(!once) { pl.Init(320, 240); once = true; };
     int w, h;
     wxClientDC MainDC(m_PanelMain), SubDC(m_PanelSub);
     m_PanelMain->GetClientSize(&w, &h);
-    constexpr float sigma = 0.333f;
+    wxImage MainImage(w, h);
+    m_PanelSub->GetClientSize(&w, &h);
+    constexpr float sigma = 1.0f;
     Plot::LineFunc mfunc = [](float x) {
         constexpr float one_over_sqrt_two_pi = 1.0 / std::sqrt(2.0 * M_PI);
         return (one_over_sqrt_two_pi / sigma) * std::exp(complex<float>(x * x * (-1.0f / (2.0f * sigma * sigma)), (float)(2.0f * M_PI) * x));
     };
-    pl.SetRange(-3.0f * sigma, 3.0f * sigma, -1.5f, 1.5f);
+    pl.SetRange(-3.0f * sigma, 3.0f * sigma, -0.5f / sigma, 0.5f / sigma);
     pl.Draw(&mfunc, w, h);
-    wxImage MainImage(pl.GetWidth(), pl.GetHeight(), (unsigned char *)const_cast<void *>(pl.GetData()), true);
-    m_PanelSub->GetClientSize(&w, &h);
-    wxImage SubImage(w, h);
+    wxImage SubImage(pl.GetWidth(), pl.GetHeight(), (unsigned char *)const_cast<void *>(pl.GetData()), true);
     WaitForNextFrame(30);
-    wxBitmap MainBitmap(MainImage);
-    wxBitmap SubBitmap(SubImage);
-    MainDC.DrawBitmap(MainBitmap, 0, 0);
-    SubDC.DrawBitmap(SubBitmap, 0, 0);
+    MainDC.DrawBitmap(wxBitmap(MainImage), 0, 0);
+    SubDC.DrawBitmap(wxBitmap(SubImage), 0, 0);
     event.RequestMore(true);
     return;
 }
@@ -182,7 +180,7 @@ void MainFrame::OpenErrorDialog(void) {
 
 bool MainFrame::OpenStream(io_ptr &pReader, io_ptr &pWriter) {
     if(!m_pPlayer) m_pPlayer = new Player;
-    if(!m_pPlayer->Init(pReader, pWriter)) {
+    if(!m_pPlayer->Init(pReader, pWriter, m_pAnalyzer)) {
         delete m_pPlayer;
         m_pPlayer = nullptr;
         return false;

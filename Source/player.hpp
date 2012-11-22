@@ -24,7 +24,6 @@
 
 #include <memory>
 #include <thread>
-#include "wavelet.hpp"
 #include "util/io.hpp"
 
 namespace WaveletAnalyzer {
@@ -42,12 +41,10 @@ public:
 
 public:
     bool Init(io_ptr &pInput, io_ptr &pOutput);
+    bool Init(io_ptr &pInput, io_ptr &pOutput, io_ptr &pAnalyzer);
 
 public:
-    const char *GetMainGraph(size_t width, size_t height);
-    const char *GetSubGraph(size_t width, size_t height);
-
-public:
+    bool SetDataSize(size_t size);
     bool SetVolume(float vol);
 
 public:
@@ -61,7 +58,9 @@ private:
 private:
     io_ptr  m_pInput;
     io_ptr  m_pOutput;
+    io_ptr  m_pAnalyzer;
     thread *m_pThread;
+    size_t  m_DataNum;
     float   m_Volume;
     bool    m_PlayFlag;
     bool    m_StopFlag;

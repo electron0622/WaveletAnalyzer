@@ -135,8 +135,8 @@ size_t Reader::Tell(void) {
 }
 
 void Reader::Main(const void *input, void *, size_t count) {
-    m_Mutex.lock();
     size_t num = count * m_SampleFormat.NumChannels;
+    m_Mutex.lock();
     for(size_t i = 0; i < num; i++) {
         if(m_Buffer.size() >= m_MaxBufNum) {
             m_Buffer.pop();

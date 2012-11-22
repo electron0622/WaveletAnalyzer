@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  mainframe.hpp
+//  analyzer.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,54 +19,31 @@
 //
 //============================================================================
 
-#ifndef _MAINFRAME_HPP_
-#define _MAINFRAME_HPP_
+#ifndef _ANALYZER_HPP_
+#define _ANALYZER_HPP_
 
-#include "frame.h"
-#include "player.hpp"
-#include "analyzer.hpp"
+#include "util/io.hpp"
 
 namespace WaveletAnalyzer {
 
-class MainFrame : public IMainFrame {
+class Analyzer : public Util::IO {
 
 public:
-    MainFrame(wxWindow *parent);
-    ~MainFrame();
+    Analyzer();
+    ~Analyzer();
+
+public:
+    bool   Open(const char *name);
+    void   Close(void);
+    size_t Read(void *data, size_t size);
+    size_t Write(const void *data, size_t size);
+    size_t Tell(void);
 
 private:
-    void OnWindowClose(wxCloseEvent &event);
-    void OnWindowIdle(wxIdleEvent &event);
-
-private:
-    void OnMenuOpen(wxCommandEvent &event);
-    void OnMenuDevice(wxCommandEvent &event);
-    void OnMenuClose(wxCommandEvent &event);
-    void OnMenuExit(wxCommandEvent &event);
-
-private:
-    void OnMenuAbout(wxCommandEvent &event);
-
-private:
-    void OnPlayButtonClick(wxCommandEvent &event);
-    void OnStopButtonClick(wxCommandEvent &event);
-
-private:
-    void OpenErrorDialog(void);
-
-private:
-    bool OpenStream(io_ptr &pReader, io_ptr &pWriter);
-    bool CloseStream(void);
-
-private:
-    void WaitForNextFrame(size_t freq);
-
-private:
-    Player *m_pPlayer;
-    io_ptr  m_pAnalyzer;
+    void Main(void);
 
 };
 
 }  // namespace WaveletAnalyzer
 
-#endif /* _MAINFRAME_HPP_ */
+#endif /* _ANALYZER_HPP_ */

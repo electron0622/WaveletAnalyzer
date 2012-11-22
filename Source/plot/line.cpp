@@ -108,10 +108,10 @@ void Line::Draw(LineFunc *func, size_t width, size_t height) {
         yr[i]  = y.real();
         yi[i]  = y.imag();
     }
-    pls.col0(1);
-    pls.line(num, &xr[0], &yr[0]);
     pls.col0(9);
     pls.line(num, &xr[0], &yi[0]);
+    pls.col0(1);
+    pls.line(num, &xr[0], &yr[0]);
     return;
 }
 

@@ -156,7 +156,7 @@ void Reader::FillBuffer(T bias, float scale) {
     m_Mutex.unlock();
     m_SampleFormat.SampleRate  = FFmpegWrapper::GetSampleRate();
     m_SampleFormat.NumChannels = FFmpegWrapper::GetNumChannels();
-    while(!m_EndFlag) {
+    while(!m_EndFlag && num > 0) {
         m_Mutex.lock();
         auto full = m_Buffer.size() >= m_MaxBufNum;
         m_Mutex.unlock();
