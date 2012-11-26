@@ -62,7 +62,7 @@ void MainFrame::OnWindowIdle(wxIdleEvent &event) {
     constexpr float sigma = 1.0f;
     Plot::LineFunc mfunc = [](float x) {
         constexpr float one_over_sqrt_two_pi = 1.0 / std::sqrt(2.0 * M_PI);
-        return (one_over_sqrt_two_pi / sigma) * std::exp(complex<float>(x * x * (-1.0f / (2.0f * sigma * sigma)), (float)(2.0f * M_PI) * x));
+        return (one_over_sqrt_two_pi / sigma) * std::exp(std::complex<float>(x * x * (-1.0f / (2.0f * sigma * sigma)), (float)(2.0f * M_PI) * x));
     };
     pl.SetRange(-3.0f * sigma, 3.0f * sigma, -0.5f / sigma, 0.5f / sigma);
     pl.Draw(&mfunc, w, h);
@@ -180,7 +180,7 @@ void MainFrame::OpenErrorDialog(void) {
 
 bool MainFrame::OpenStream(io_ptr &pReader, io_ptr &pWriter) {
     if(!m_pPlayer) m_pPlayer = new Player;
-    if(!m_pPlayer->Init(pReader, pWriter, m_pAnalyzer)) {
+    if(!m_pPlayer->Init(pReader, pWriter)) {
         delete m_pPlayer;
         m_pPlayer = nullptr;
         return false;

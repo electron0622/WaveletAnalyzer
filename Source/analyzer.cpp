@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  analyzer.hpp
+//  analyzer.cpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,50 +19,44 @@
 //
 //============================================================================
 
-#ifndef _ANALYZER_HPP_
-#define _ANALYZER_HPP_
-
-#include <vector>
-#include <queue>
-#include <thread>
-#include <mutex>
-#include "util/io.hpp"
+#include "analyzer.hpp"
 
 namespace WaveletAnalyzer {
 
-using std::vector;
-using std::queue;
-using std::thread;
-using std::mutex;
+Analyzer::Analyzer() {
+}
 
-class Analyzer : public Util::IO {
+Analyzer::~Analyzer() {
+}
 
-public:
-    Analyzer();
-    ~Analyzer();
+bool Analyzer::Open(const char *name) {
+    return true;
+}
 
-public:
-    bool SetCacheSize(size_t size);
+void Analyzer::Close(void) {
+    return;
+}
 
-public:
-    bool   Open(const char *name);
-    void   Close(void);
-    size_t Write(const void *data, size_t size);
+size_t Analyzer::Write(const void *data, size_t size) {
+    m_Mutex.lock();
+    if(data) {
+        size_t num = size / sizeof(float);
+        for(size_t i = 0; i < num; i++) {
+            if(m_Buffer.size() >= m_MaxBufNum) {
+                size = i * sizeof(float);
+                break;
+            }
+            m_Buffer.push(((const float *)data)[i]);
+        }
+    } else {
+        size = (m_MaxBufNum - m_Buffer.size()) * sizeof(float);
+    }
+    m_Mutex.unlock();
+    return size;
+}
 
-private:
-    void Main(void);
-
-private:
-    vector<float *> m_VecData;
-    queue<float *>  m_QueData;
-    queue<float>    m_Buffer;
-    thread          m_Thread;
-    mutex           m_Mutex;
-    size_t          m_MaxDataNum;
-    size_t          m_MaxBufNum;
-
-};
+void Analyzer::Main(void) {
+    return;
+}
 
 }  // namespace WaveletAnalyzer
-
-#endif /* _ANALYZER_HPP_ */
