@@ -39,19 +39,20 @@ Reader::~Reader() {
     Close();
 }
 
-void Reader::SetCacheSize(size_t size) {
-    m_MaxBufNum = (size + (sizeof(float) - 1)) / sizeof(float);
-    return;
+bool Reader::SetCacheSize(size_t size) {
+    if(size < sizeof(float)) return false;
+    m_MaxBufNum = size / sizeof(float);
+    return true;
 }
 
-void Reader::SetSampleRate(size_t rate) {
+bool Reader::SetSampleRate(size_t rate) {
     m_SampleFormat.SampleRate = rate;
-    return;
+    return true;
 }
 
-void Reader::SetNumChannels(size_t ch) {
+bool Reader::SetNumChannels(size_t ch) {
     m_SampleFormat.NumChannels = ch;
-    return;
+    return true;
 }
 
 size_t Reader::GetCacheSize(void) const {

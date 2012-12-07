@@ -49,9 +49,9 @@ public:
     ~Writer();
 
 public:
-    void SetCacheSize(size_t size);
-    void SetSampleRate(size_t rate);
-    void SetNumChannels(size_t ch);
+    bool SetCacheSize(size_t size);
+    bool SetSampleRate(size_t rate);
+    bool SetNumChannels(size_t ch);
 
 public:
     size_t GetCacheSize(void) const;

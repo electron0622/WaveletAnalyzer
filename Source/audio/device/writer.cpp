@@ -46,19 +46,20 @@ Writer::~Writer() {
     Close();
 }
 
-void Writer::SetCacheSize(size_t size) {
-    m_MaxBufNum = (size + (sizeof(float) - 1)) / sizeof(float);
-    return;
+bool Writer::SetCacheSize(size_t size) {
+    if(size < sizeof(float)) return false;
+    m_MaxBufNum = size / sizeof(float);
+    return true;
 }
 
-void Writer::SetSampleRate(size_t rate) {
+bool Writer::SetSampleRate(size_t rate) {
     m_SampleFormat.SampleRate = rate;
-    return;
+    return true;
 }
 
-void Writer::SetNumChannels(size_t ch) {
+bool Writer::SetNumChannels(size_t ch) {
     m_SampleFormat.NumChannels = ch;
-    return;
+    return true;
 }
 
 size_t Writer::GetCacheSize(void) const {
