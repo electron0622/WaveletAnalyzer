@@ -25,24 +25,30 @@
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/choicdlg.h>
+#include <functional>
 #include <chrono>
 #include "aboutdialog.hpp"
 #include "mainframe.hpp"
 #include "audio/file/reader.hpp"
 #include "audio/device/reader.hpp"
 #include "audio/device/writer.hpp"
-#include "plot/line.hpp"
 
 namespace WaveletAnalyzer {
 
 namespace chrono = std::chrono;
 
+using std::bind;
+using std::placeholders::_1;
+
 MainFrame::MainFrame(wxWindow *parent) :
-        IMainFrame(parent), m_pPlayer(nullptr), m_pAnalyzer(new Util::IO) {
+        IMainFrame(parent), m_pPlayer(nullptr), m_pAnalyzer(new Analyzer) {
+    m_Shades.Init(1920, 1080);
+    m_Line  .Init( 320,  240);
 }
 
 MainFrame::~MainFrame() {
     delete m_pPlayer;
+    delete m_pAnalyzer;
 }
 
 void MainFrame::OnWindowClose(wxCloseEvent &event) {
@@ -51,26 +57,35 @@ void MainFrame::OnWindowClose(wxCloseEvent &event) {
 }
 
 void MainFrame::OnWindowIdle(wxIdleEvent &event) {
-    static Plot::Line pl;
-    static auto once = false;
-    if(!once) { pl.Init(320, 240); once = true; };
-    int w, h;
+    event.RequestMore(true);
+    if(!IsNextFrame(1)) { usleep(1); return; }
+    unsigned char *data;
+    int width, height;
+    float  time  = 5.0f;
+    float  sigma = 3.0f;
+    size_t rate  = 44100;
+    float  fmin  = 50.0f;
+    float  fmax  = 10000.0f;
+    size_t fnum  = 512;
     wxClientDC MainDC(m_PanelMain), SubDC(m_PanelSub);
-    m_PanelMain->GetClientSize(&w, &h);
-    wxImage MainImage(w, h);
-    m_PanelSub->GetClientSize(&w, &h);
-    constexpr float sigma = 1.0f;
-    Plot::LineFunc mfunc = [](float x) {
-        constexpr float one_over_sqrt_two_pi = 1.0 / std::sqrt(2.0 * M_PI);
-        return (one_over_sqrt_two_pi / sigma) * std::exp(std::complex<float>(x * x * (-1.0f / (2.0f * sigma * sigma)), (float)(2.0f * M_PI) * x));
-    };
-    pl.SetRange(-3.0f * sigma, 3.0f * sigma, -0.5f / sigma, 0.5f / sigma);
-    pl.Draw(&mfunc, w, h);
-    wxImage SubImage(pl.GetWidth(), pl.GetHeight(), (unsigned char *)const_cast<void *>(pl.GetData()), true);
-    WaitForNextFrame(30);
+    m_PanelMain->GetClientSize(&width, &height);
+    m_Shades.SetRange(-time, 0.0f, fmin, fmax);
+    m_pAnalyzer->Init(sigma, time, rate, fmin, fmax, fnum);
+    size_t xnum = time * rate;
+    size_t ynum = fnum;
+    m_Shades.Draw(m_pAnalyzer->GetData(), xnum, ynum, width, height);
+    data = (unsigned char *)const_cast<void *>(m_Shades.GetData());
+    wxImage MainImage(m_Shades.GetWidth(), m_Shades.GetHeight(), data, true);
+    m_PanelSub->GetClientSize(&width, &height);
+    Plot::LineFunc mfunc = std::bind(&Analyzer::MotherWavelet, _1, sigma);
+    auto col = 3.0f * sigma;
+    auto row = 0.5f / sigma;
+    m_Line.SetRange(-col, col, -row, row);
+    m_Line.Draw(&mfunc, width, height);
+    data = (unsigned char *)const_cast<void *>(m_Line.GetData());
+    wxImage SubImage(m_Line.GetWidth(), m_Line.GetHeight(), data, true);
     MainDC.DrawBitmap(wxBitmap(MainImage), 0, 0);
     SubDC.DrawBitmap(wxBitmap(SubImage), 0, 0);
-    event.RequestMore(true);
     return;
 }
 
@@ -166,7 +181,7 @@ void MainFrame::OnPlayButtonClick(wxCommandEvent &event) {
 }
 
 void MainFrame::OnStopButtonClick(wxCommandEvent &event) {
-	if(m_pPlayer) m_pPlayer->Stop();
+    if(m_pPlayer) m_pPlayer->Stop();
     return;
 }
 
@@ -180,7 +195,7 @@ void MainFrame::OpenErrorDialog(void) {
 
 bool MainFrame::OpenStream(io_ptr &pReader, io_ptr &pWriter) {
     if(!m_pPlayer) m_pPlayer = new Player;
-    if(!m_pPlayer->Init(pReader, pWriter)) {
+    if(!m_pPlayer->Init(pReader, pWriter, m_pAnalyzer)) {
         delete m_pPlayer;
         m_pPlayer = nullptr;
         return false;
@@ -201,18 +216,13 @@ bool MainFrame::CloseStream(void) {
     return true;
 }
 
-void MainFrame::WaitForNextFrame(size_t freq) {
+bool MainFrame::IsNextFrame(size_t freq) {
     static auto t0 = chrono::system_clock::now();
     auto dt = chrono::nanoseconds(1000000000 / freq);
-    while(true) {
-        auto t = chrono::system_clock::now();
-        if(t - t0 >= dt) {
-            t0 = t;
-            break;
-        }
-        usleep(1);
-    }
-    return;
+    auto t  = chrono::system_clock::now();
+    if(t - t0 < dt) return false;
+    t0 = t;
+    return true;
 }
 
 }  // namespace WaveletAnalyzer

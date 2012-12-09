@@ -23,15 +23,14 @@
 #include <functional>
 #include <vector>
 #include "player.hpp"
-#include "util/io.hpp"
-#include "wavelet.hpp"
 
 namespace WaveletAnalyzer {
 
 using std::bind;
 using std::vector;
 
-Player::Player() : m_pThread(nullptr), m_DataNum(0x100), m_Volume(1.0f),
+Player::Player() : m_pAnalyzer(nullptr),
+        m_pThread(nullptr), m_DataNum(0x100), m_Volume(1.0f),
         m_PlayFlag(false), m_StopFlag(false), m_EndFlag(false) {
 }
 
@@ -43,21 +42,16 @@ Player::~Player() {
     delete m_pThread;
 }
 
-bool Player::Init(io_ptr &pInput, io_ptr &pOutput) {
-    auto pAnalyzer = io_ptr(new Util::IO);
-    return Init(pInput, pOutput, pAnalyzer);
-}
-
-bool Player::Init(io_ptr &pInput, io_ptr &pOutput, io_ptr &pAnalyzer) {
+bool Player::Init(io_ptr &pInput, io_ptr &pOutput, Analyzer *pAnalyzer) {
     if(m_pThread || !pInput || !pOutput || !pAnalyzer) return false;
     m_pInput    = pInput;
     m_pOutput   = pOutput;
     m_pAnalyzer = pAnalyzer;
-    m_pThread   = new thread(bind(&Player::Main, this));
+    m_pThread = new thread(bind(&Player::Main, this));
     return true;
 }
 
-bool Player::SetDataSize(size_t size) {
+bool Player::SetCacheSize(size_t size) {
     if(size < sizeof(float)) return false;
     m_DataNum = size / sizeof(float);
     return true;
@@ -67,6 +61,10 @@ bool Player::SetVolume(float vol) {
     if(vol < 0.0f) return false;
     m_Volume = vol;
     return true;
+}
+
+size_t Player::GetCacheSize(void) const {
+    return m_DataNum * sizeof(float);
 }
 
 void Player::Play(void) {
@@ -113,9 +111,8 @@ void Player::Main(void) {
         m_pOutput  ->Write(&data[0], size);
         m_pAnalyzer->Write(&data[0], size);
     }
-    m_pInput   ->Close();
-    m_pOutput  ->Close();
-    m_pAnalyzer->Close();
+    m_pInput ->Close();
+    m_pOutput->Close();
     return;
 }
 

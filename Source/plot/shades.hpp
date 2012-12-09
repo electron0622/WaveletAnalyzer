@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  plot/line.hpp
+//  plot/shades.hpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,10 +19,11 @@
 //
 //============================================================================
 
-#ifndef _PLOT_LINE_HPP_
-#define _PLOT_LINE_HPP_
+#ifndef _PLOT_SHADES_HPP_
+#define _PLOT_SHADES_HPP_
 
 #include <stdint.h>
+#include <memory>
 #include <functional>
 #include <complex>
 
@@ -30,16 +31,17 @@ namespace WaveletAnalyzer {
 
 namespace Plot {
 
+using std::shared_ptr;
 using std::function;
 using std::complex;
 
-typedef function<complex<float> (float)> LineFunc;
+typedef shared_ptr<float> float_ptr;
 
-class Line {
+class Shades {
 
 public:
-    Line();
-    ~Line();
+    Shades();
+    ~Shades();
 
 public:
     bool Init(size_t width, size_t height);
@@ -53,7 +55,16 @@ public:
     void SetRange(float xmin, float xmax, float ymin, float ymax);
 
 public:
-    void Draw(LineFunc *func, size_t width, size_t height);
+    void Draw(const float_ptr *data, size_t xnum, size_t ynum,
+              size_t width, size_t height);
+
+private:
+    void Lerp(uint8_t *dst, size_t dstw, size_t dsth,
+              size_t xmin, size_t xmax, size_t ymin, size_t ymax,
+              const float_ptr *src, size_t srcw, size_t srch);
+
+private:
+    inline void UnormToRGB(uint8_t *dst, float src);
 
 private:
     uint8_t *m_pData;
@@ -70,4 +81,4 @@ private:
 
 }  // namespace WaveletAnalyzer
 
-#endif /* _PLOT_LINE_HPP_ */
+#endif /* _PLOT_SHADES_HPP_ */

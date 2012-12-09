@@ -23,10 +23,12 @@
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/spinbutt.h>
 #include <wx/statusbr.h>
 #include <wx/frame.h>
 #include <wx/notebook.h>
-#include <wx/stattext.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -53,6 +55,9 @@ namespace WaveletAnalyzer
 			wxPanel* m_PanelSettings;
 			wxButton* m_ButtonPlay;
 			wxButton* m_ButtonStop;
+			wxStaticText* m_StaticTextSigma;
+			wxTextCtrl* m_textCtrl1;
+			wxSpinButton* m_spinBtn1;
 			wxStatusBar* m_StatusBar;
 			
 			// Virtual event handlers, overide them in your derived class

@@ -25,6 +25,7 @@
 #include <memory>
 #include <thread>
 #include "util/io.hpp"
+#include "analyzer.hpp"
 
 namespace WaveletAnalyzer {
 
@@ -40,12 +41,14 @@ public:
     ~Player();
 
 public:
-    bool Init(io_ptr &pInput, io_ptr &pOutput);
-    bool Init(io_ptr &pInput, io_ptr &pOutput, io_ptr &pAnalyzer);
+    bool Init(io_ptr &pInput, io_ptr &pOutput, Analyzer *pAnalyzer);
 
 public:
-    bool SetDataSize(size_t size);
+    bool SetCacheSize(size_t size);
     bool SetVolume(float vol);
+
+public:
+    size_t GetCacheSize(void) const;
 
 public:
     void Play(void);
@@ -56,15 +59,15 @@ private:
     void Main(void);
 
 private:
-    io_ptr  m_pInput;
-    io_ptr  m_pOutput;
-    io_ptr  m_pAnalyzer;
-    thread *m_pThread;
-    size_t  m_DataNum;
-    float   m_Volume;
-    bool    m_PlayFlag;
-    bool    m_StopFlag;
-    bool    m_EndFlag;
+    io_ptr       m_pInput;
+    io_ptr       m_pOutput;
+    Analyzer    *m_pAnalyzer;
+    thread      *m_pThread;
+    size_t       m_DataNum;
+    float        m_Volume;
+    bool         m_PlayFlag;
+    bool         m_StopFlag;
+    bool         m_EndFlag;
 
 };
 

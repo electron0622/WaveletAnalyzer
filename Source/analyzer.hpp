@@ -22,44 +22,73 @@
 #ifndef _ANALYZER_HPP_
 #define _ANALYZER_HPP_
 
+#include <memory>
 #include <vector>
+#include <deque>
 #include <queue>
 #include <thread>
 #include <mutex>
-#include "util/io.hpp"
+#include "wavelet.hpp"
 
 namespace WaveletAnalyzer {
 
+using std::shared_ptr;
 using std::vector;
+using std::deque;
 using std::queue;
 using std::thread;
 using std::mutex;
 
-class Analyzer : public Util::IO {
+typedef shared_ptr<float> float_ptr;
+
+class Analyzer {
 
 public:
     Analyzer();
     ~Analyzer();
 
 public:
+    bool Init(float sigma, float time, size_t rate,
+              float fmin,  float fmax, size_t fnum);
+
+public:
     bool SetCacheSize(size_t size);
 
 public:
-    bool   Open(const char *name);
-    void   Close(void);
+    size_t GetCacheSize(void) const;
+    const float_ptr *GetData(void);
+
+public:
     size_t Write(const void *data, size_t size);
+
+public:
+    static complex<float> MotherWavelet(float x, float sigma);
+    static float Interpolation(float min, float max, float alpha);
 
 private:
     void Main(void);
 
 private:
-    vector<float *> m_VecData;
-    queue<float *>  m_QueData;
-    queue<float>    m_Buffer;
-    thread          m_Thread;
-    mutex           m_Mutex;
-    size_t          m_MaxDataNum;
-    size_t          m_MaxBufNum;
+    Wavelet           m_Wavelet;
+    vector<float_ptr> m_VecData;
+    deque<float_ptr>  m_QueData;
+    queue<float>      m_Buffer;
+    thread            m_Thread;
+    mutex             m_InitMutex;
+    mutex             m_DataMutex;
+    mutex             m_BufMutex;
+    float            *m_pSrcTemp;
+    float            *m_pDstTemp;
+    float             m_Sigma;
+    float             m_SampleTime;
+    float             m_FreqMin;
+    float             m_FreqMax;
+    size_t            m_FreqNum;
+    size_t            m_SampleRate;
+    size_t            m_ClipNum;
+    size_t            m_TimeNum;
+    size_t            m_MaxDataNum;
+    bool              m_EndFlag;
 
 };
 

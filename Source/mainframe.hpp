@@ -23,6 +23,8 @@
 #define _MAINFRAME_HPP_
 
 #include "frame.h"
+#include "plot/shades.hpp"
+#include "plot/line.hpp"
 #include "player.hpp"
 #include "analyzer.hpp"
 
@@ -59,11 +61,13 @@ private:
     bool CloseStream(void);
 
 private:
-    void WaitForNextFrame(size_t freq);
+    bool IsNextFrame(size_t freq);
 
 private:
-    Player *m_pPlayer;
-    io_ptr  m_pAnalyzer;
+    Plot::Shades m_Shades;
+    Plot::Line   m_Line;
+    Player      *m_pPlayer;
+    Analyzer    *m_pAnalyzer;
 
 };
 

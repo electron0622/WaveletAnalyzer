@@ -74,13 +74,29 @@ IMainFrame::IMainFrame( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_BoxSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_ButtonPlay = new wxButton( m_PanelSettings, wxID_ANY, wxT("Play"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_BoxSizer4->Add( m_ButtonPlay, 0, wxALL, 5 );
+	m_BoxSizer4->Add( m_ButtonPlay, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_ButtonStop = new wxButton( m_PanelSettings, wxID_ANY, wxT("Stop"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_BoxSizer4->Add( m_ButtonStop, 0, wxALL, 5 );
+	m_BoxSizer4->Add( m_ButtonStop, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	
 	m_BoxSizer3->Add( m_BoxSizer4, 0, wxEXPAND, 5 );
+	
+	wxBoxSizer* m_BoxSizer5;
+	m_BoxSizer5 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_StaticTextSigma = new wxStaticText( m_PanelSettings, wxID_ANY, wxT("sigma:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_StaticTextSigma->Wrap( -1 );
+	m_BoxSizer5->Add( m_StaticTextSigma, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrl1 = new wxTextCtrl( m_PanelSettings, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_BoxSizer5->Add( m_textCtrl1, 1, wxTOP|wxBOTTOM|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_spinBtn1 = new wxSpinButton( m_PanelSettings, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS );
+	m_BoxSizer5->Add( m_spinBtn1, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	
+	
+	m_BoxSizer3->Add( m_BoxSizer5, 0, wxEXPAND, 5 );
 	
 	
 	m_PanelSettings->SetSizer( m_BoxSizer3 );

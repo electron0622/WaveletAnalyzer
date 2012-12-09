@@ -1,6 +1,6 @@
 //============================================================================
 //
-//  line.cpp
+//  plot/line.cpp
 //
 //  Copyright (C) 2012  Sato Takaaki.
 //
@@ -19,8 +19,8 @@
 //
 //============================================================================
 
-#include <string.h>
 #include <plplot/plstream.h>
+#include <cstring>
 #include <vector>
 #include "line.hpp"
 
@@ -28,6 +28,7 @@ namespace WaveletAnalyzer {
 
 namespace Plot {
 
+using std::memset;
 using std::vector;
 
 Line::Line() : m_pData(nullptr), m_Width(0), m_Height(0),
@@ -67,13 +68,13 @@ void Line::SetRange(float xmin, float xmax, float ymin, float ymax) {
 }
 
 void Line::Draw(LineFunc *func, size_t width, size_t height) {
-    auto data = m_pData;
+    auto mem  = m_pData;
     auto wmax = m_Width;
     auto hmax = m_Height;
-    memset(data, 0, wmax * hmax * 3);
+    memset(mem, 0, wmax * hmax * 3);
     plstream pls;
     pls.sdev("mem");
-    pls.smem(wmax, hmax, data);
+    pls.smem(wmax, hmax, mem);
     pls.init();
     pls.adv(0);
     pls.schr(2, 1.0f);
