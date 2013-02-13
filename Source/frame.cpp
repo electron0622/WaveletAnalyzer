@@ -122,6 +122,7 @@ IMainFrame::IMainFrame( wxWindow* parent, wxWindowID id, const wxString& title, 
 	this->Connect( m_MenuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuClose ) );
 	this->Connect( m_MenuItemExit->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuExit ) );
 	this->Connect( m_MenuItemAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuAbout ) );
+	m_PanelMain->Connect( wxEVT_MOTION, wxMouseEventHandler( IMainFrame::OnPanelMainMotion ), NULL, this );
 	m_ButtonPlay->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( IMainFrame::OnPlayButtonClick ), NULL, this );
 	m_ButtonStop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( IMainFrame::OnStopButtonClick ), NULL, this );
 }
@@ -136,6 +137,7 @@ IMainFrame::~IMainFrame()
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuClose ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuExit ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( IMainFrame::OnMenuAbout ) );
+	m_PanelMain->Disconnect( wxEVT_MOTION, wxMouseEventHandler( IMainFrame::OnPanelMainMotion ), NULL, this );
 	m_ButtonPlay->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( IMainFrame::OnPlayButtonClick ), NULL, this );
 	m_ButtonStop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( IMainFrame::OnStopButtonClick ), NULL, this );
 	

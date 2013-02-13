@@ -24,8 +24,10 @@ bool Wavelet::Init(size_t time_size, float time_min, float time_max,
                    InterpolationFunc &interpolation)
 {
     if(!mother_wavelet || !interpolation || !m_Fourier.Init(time_size)) return false;
+    delete[] m_Temp3;
     delete[] m_Temp2;
     delete[] m_Temp1;
+    delete[] m_Temp0;
     delete[] m_Table;
     auto table  = new complex<float>[time_size * freq_size];
     m_Table     = table;

@@ -39,6 +39,7 @@ namespace chrono = std::chrono;
 
 using std::bind;
 using std::placeholders::_1;
+using std::isnan;
 
 MainFrame::MainFrame(wxWindow *parent) :
         IMainFrame(parent), m_pPlayer(nullptr), m_pAnalyzer(new Analyzer) {
@@ -61,12 +62,13 @@ void MainFrame::OnWindowIdle(wxIdleEvent &event) {
     if(!IsNextFrame(1)) { usleep(1); return; }
     unsigned char *data;
     int width, height;
-    float  time  = 5.0f;
-    float  sigma = 3.0f;
+    float  time  = 10.0f;
+    float  sigma = 1.0f;
     size_t rate  = 44100;
-    float  fmin  = 50.0f;
-    float  fmax  = 10000.0f;
-    size_t fnum  = 512;
+    float  fmin  = 20.0f;
+    float  fmax  = 20000.0f;
+    size_t fnum  = 128;
+    if(m_pPlayer) m_pPlayer->SetVolume(10.0f);
     wxClientDC MainDC(m_PanelMain), SubDC(m_PanelSub);
     m_PanelMain->GetClientSize(&width, &height);
     m_Shades.SetRange(-time, 0.0f, fmin, fmax);
@@ -86,6 +88,7 @@ void MainFrame::OnWindowIdle(wxIdleEvent &event) {
     wxImage SubImage(m_Line.GetWidth(), m_Line.GetHeight(), data, true);
     MainDC.DrawBitmap(wxBitmap(MainImage), 0, 0);
     SubDC.DrawBitmap(wxBitmap(SubImage), 0, 0);
+    DrawXYZ(wxGetMousePosition() - m_PanelMain->GetScreenPosition());
     return;
 }
 
@@ -175,6 +178,11 @@ void MainFrame::OnMenuAbout(wxCommandEvent &event) {
     return;
 }
 
+void MainFrame::OnPanelMainMotion(wxMouseEvent &event) {
+    DrawXYZ(wxPoint(event.GetX(), event.GetY()));
+    return;
+}
+
 void MainFrame::OnPlayButtonClick(wxCommandEvent &event) {
     if(m_pPlayer) m_pPlayer->Play();
     return;
@@ -223,6 +231,19 @@ bool MainFrame::IsNextFrame(size_t freq) {
     if(t - t0 < dt) return false;
     t0 = t;
     return true;
+}
+
+void MainFrame::DrawXYZ(const wxPoint &p) {
+    auto s = m_PanelMain->GetClientSize();
+    auto x = m_Shades.GetX(p.x, s.x);
+    auto y = m_Shades.GetY(p.y, s.y);
+    auto z = m_Shades.GetZ(p.x, p.y);
+    if(!isnan(x) && !isnan(y) && !isnan(z)) {
+        wxString str;
+        str << wxT("(") << x << wxT(", ") << y << wxT(", ") << z << wxT(")");
+        m_StatusBar->SetStatusText(str);
+    }
+    return;
 }
 
 }  // namespace WaveletAnalyzer

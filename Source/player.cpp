@@ -106,9 +106,9 @@ void Player::Main(void) {
         }
         data.resize(num);
         m_pInput   ->Read (&data[0], size);
+        m_pOutput  ->Write(&data[0], size);
         auto vol = m_Volume;
         for(size_t i = 0; i < num; i++) data[i] *= vol;
-        m_pOutput  ->Write(&data[0], size);
         m_pAnalyzer->Write(&data[0], size);
     }
     m_pInput ->Close();

@@ -50,6 +50,9 @@ private:
     void OnMenuAbout(wxCommandEvent &event);
 
 private:
+    void OnPanelMainMotion(wxMouseEvent &event);
+
+private:
     void OnPlayButtonClick(wxCommandEvent &event);
     void OnStopButtonClick(wxCommandEvent &event);
 
@@ -62,6 +65,9 @@ private:
 
 private:
     bool IsNextFrame(size_t freq);
+
+private:
+    void DrawXYZ(const wxPoint &p);
 
 private:
     Plot::Shades m_Shades;

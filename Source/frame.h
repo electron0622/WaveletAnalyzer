@@ -68,6 +68,7 @@ namespace WaveletAnalyzer
 			virtual void OnMenuClose( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnMenuExit( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnMenuAbout( wxCommandEvent& event ) { event.Skip(); }
+			virtual void OnPanelMainMotion( wxMouseEvent& event ) { event.Skip(); }
 			virtual void OnPlayButtonClick( wxCommandEvent& event ) { event.Skip(); }
 			virtual void OnStopButtonClick( wxCommandEvent& event ) { event.Skip(); }
 			

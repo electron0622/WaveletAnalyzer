@@ -22,6 +22,7 @@
 #include <string.h>
 #include <plplot/plstream.h>
 #include <vector>
+#include <limits>
 #include "shades.hpp"
 
 namespace WaveletAnalyzer {
@@ -29,18 +30,24 @@ namespace WaveletAnalyzer {
 namespace Plot {
 
 using std::vector;
+using std::numeric_limits;
+using std::isnan;
 
-Shades::Shades() : m_pData(nullptr), m_Width(0), m_Height(0),
+Shades::Shades() : m_pColorData(nullptr), m_pFloatData(nullptr),
+        m_Width(0), m_Height(0),
         m_MinX(-1.0f), m_MaxX(1.0f), m_MinY(-1.0f), m_MaxY(1.0f) {
 }
 
 Shades::~Shades() {
-    delete[] m_pData;
+    delete[] m_pColorData;
+    delete[] m_pFloatData;
 }
 
 bool Shades::Init(size_t width, size_t height) {
-    delete[] m_pData;
-    m_pData  = new uint8_t[width * height * 3];
+    delete[] m_pColorData;
+    delete[] m_pFloatData;
+    m_pColorData = new uint8_t[width * height * 3];
+    m_pFloatData = new float  [width * height    ];
     m_Width  = width;
     m_Height = height;
     return true;
@@ -55,7 +62,34 @@ size_t Shades::GetHeight(void) const {
 }
 
 const void *Shades::GetData(void) const {
-    return m_pData;
+    return m_pColorData;
+}
+
+float Shades::GetX(size_t x, size_t width) const {
+    auto xmingap = XGAP;
+    auto xmaxgap = width - xmingap;
+    if(x < xmingap || x > xmaxgap) return numeric_limits<float>::quiet_NaN();
+    x     -= xmingap;
+    width -= xmingap << 1;
+    auto alpha = (float)x / (width - 1);
+    return m_MinX * (1.0f - alpha) + m_MaxX * alpha;
+}
+
+float Shades::GetY(size_t y, size_t height) const {
+    auto ymingap = YGAP;
+    auto ymaxgap = height - ymingap;
+    if(y < ymingap || y > ymaxgap) return numeric_limits<float>::quiet_NaN();
+    y      -= ymingap;
+    height -= ymingap << 1;
+    auto alpha  = 1.0f - (float)y / (height - 1);
+    return std::pow(10, (m_MaxY - m_MinY) * alpha + m_MinY);
+}
+
+float Shades::GetZ(size_t x, size_t y) const {
+    auto width  = m_Width;
+    auto height = m_Height;
+    if(x >= width || y >= height) return numeric_limits<float>::quiet_NaN();
+    return m_pFloatData[x + y * width];
 }
 
 void Shades::SetRange(float xmin, float xmax, float ymin, float ymax) {
@@ -68,19 +102,21 @@ void Shades::SetRange(float xmin, float xmax, float ymin, float ymax) {
 
 void Shades::Draw(const float_ptr *data, size_t xnum, size_t ynum,
                   size_t width, size_t height) {
-    auto mem  = m_pData;
+    auto mem1 = m_pColorData;
+    auto mem2 = m_pFloatData;
     auto wmax = m_Width;
     auto hmax = m_Height;
-    memset(mem, 0, wmax * hmax * 3);
+    memset(mem1, 0, wmax * hmax * 3);
+    memset(mem2, 0, wmax * hmax * sizeof(float));
     plstream pls;
     pls.sdev("mem");
-    pls.smem(wmax, hmax, mem);
+    pls.smem(wmax, hmax, mem1);
     pls.init();
     pls.adv(0);
     pls.schr(2, 1.0f);
     pls.col0(3);
-    auto xmingap = 50;
-    auto ymingap = 30;
+    auto xmingap = XGAP;
+    auto ymingap = YGAP;
     auto xmaxgap = width  - xmingap;
     auto ymaxgap = height - ymingap;
     auto xmin =        (float)xmingap / wmax;
@@ -88,7 +124,7 @@ void Shades::Draw(const float_ptr *data, size_t xnum, size_t ynum,
     auto ymin = 1.0f - (float)ymaxgap / hmax;
     auto ymax = 1.0f - (float)ymingap / hmax;
     if(data) {
-        Lerp(mem,     wmax,    hmax,
+        Lerp(mem1,    mem2,    wmax,    hmax,
              xmingap, xmaxgap, ymingap, ymaxgap,
              data,    xnum,    ynum);
     }
@@ -99,11 +135,11 @@ void Shades::Draw(const float_ptr *data, size_t xnum, size_t ynum,
     ymax = m_MaxY;
     pls.wind(xmin, xmax, ymin, ymax);
     pls.box("bcfgnt", 0.0f, 0, "bcfglntv", 0.0f, 0);
-    pls.lab("", "", "");
+    pls.lab("Time[sec]", "Frequency[Hz]", "Spectrum");
     return;
 }
 
-void Shades::Lerp(uint8_t *dst, size_t dstw, size_t dsth,
+void Shades::Lerp(uint8_t *dst1, float *dst2, size_t dstw, size_t dsth,
                   size_t xmin, size_t xmax, size_t ymin, size_t ymax,
                   const float_ptr *src, size_t srcw, size_t srch) {
     auto xscale = (float)srcw / (xmax - xmin);
@@ -121,7 +157,8 @@ void Shades::Lerp(uint8_t *dst, size_t dstw, size_t dsth,
             auto y1 = x1[ysrci] * (1.0f - yalpha) + x1[ysrci + 1] * yalpha;
             auto y2 = x2[ysrci] * (1.0f - yalpha) + x2[ysrci + 1] * yalpha;
             auto gray = y1 * (1.0f - xalpha) + y2 * xalpha;
-            UnormToRGB(dst + (x + y * dstw) * 3, gray);
+            auto offset = x + y * dstw;
+            UnormToRGB(dst1 + offset * 3, dst2[offset] = gray);
         }
     }
     return;

@@ -52,6 +52,11 @@ public:
     const void *GetData(void) const;
 
 public:
+    float GetX(size_t x, size_t width) const;
+    float GetY(size_t y, size_t height) const;
+    float GetZ(size_t x, size_t y) const;
+
+public:
     void SetRange(float xmin, float xmax, float ymin, float ymax);
 
 public:
@@ -59,7 +64,7 @@ public:
               size_t width, size_t height);
 
 private:
-    void Lerp(uint8_t *dst, size_t dstw, size_t dsth,
+    void Lerp(uint8_t *dst1, float *dst2, size_t dstw, size_t dsth,
               size_t xmin, size_t xmax, size_t ymin, size_t ymax,
               const float_ptr *src, size_t srcw, size_t srch);
 
@@ -67,7 +72,12 @@ private:
     inline void UnormToRGB(uint8_t *dst, float src);
 
 private:
-    uint8_t *m_pData;
+    const size_t XGAP = 70;
+    const size_t YGAP = 40;
+
+private:
+    uint8_t *m_pColorData;
+    float   *m_pFloatData;
     size_t   m_Width;
     size_t   m_Height;
     float    m_MinX;
